@@ -29,9 +29,27 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    buildFeatures{
+        viewBinding = true
+    }
 }
 
 dependencies {
+
+    //Koin
+    implementation "io.insert-koin:koin-android:$koin_version"
+
+    //Retrofit2
+    implementation "com.squareup.retrofit:converter_gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:retrofit2:$retrofit_version"
+
+    //Okhttp
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+
+    //Gson
+    implementation "com.google.code.gson:gson:$gson_version"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
