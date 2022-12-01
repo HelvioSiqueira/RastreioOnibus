@@ -41,7 +41,7 @@ dependencies {
     implementation "io.insert-koin:koin-android:$koin_version"
 
     //Retrofit2
-    implementation "com.squareup.retrofit:converter_gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.retrofit2:retrofit2:$retrofit_version"
 
     //Okhttp
