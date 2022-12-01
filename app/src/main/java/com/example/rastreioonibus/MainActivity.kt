@@ -21,7 +21,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         scope.launch {
-            Log.d("HSV", api.autenticar().message())
+            val resposta = api.autenticar(applicationContext).body()
+
+            Log.d("HSV", resposta.toString())
         }
     }
 }

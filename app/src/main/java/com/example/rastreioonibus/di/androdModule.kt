@@ -5,12 +5,11 @@ import com.example.rastreioonibus.http.HttpUtils
 import com.example.rastreioonibus.http.RastreioOnibusApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.core.module.Module
 import org.koin.dsl.module
 import com.google.gson.GsonBuilder
+import org.koin.android.ext.koin.androidApplication
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Retrofit
-import retrofit2.create
 
 val androidModule = module {
     single { this }
