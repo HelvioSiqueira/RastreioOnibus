@@ -42,7 +42,7 @@ dependencies {
 
     //Retrofit2
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    implementation "com.squareup.retrofit2:retrofit2:$retrofit_version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
 
     //Okhttp
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
