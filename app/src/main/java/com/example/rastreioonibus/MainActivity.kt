@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
         scope.launch {
             autenticarCookie()
-            Log.d("HSV", api.getLinhas().toString())
+            Log.d("HSV", api.getLinhas()!!.joinToString("\n"))
         }
     }
 

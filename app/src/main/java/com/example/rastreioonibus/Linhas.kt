@@ -1,5 +1,7 @@
 package com.example.rastreioonibus
 
+import java.io.Serializable
+
 data class Linhas(
 
     //Código identificador da linha
@@ -24,4 +26,4 @@ data class Linhas(
 
     //Informa o letreiro descritivo da linha no sentido Terminal Secundário para Terminal Principal
     val ts: String = ""
-)
+): Serializable
