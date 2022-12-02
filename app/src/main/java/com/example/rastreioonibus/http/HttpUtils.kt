@@ -3,10 +3,11 @@ package com.example.rastreioonibus.http
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.util.Log
 import com.example.rastreioonibus.Linhas
+import com.example.rastreioonibus.Paradas
+import com.example.rastreioonibus.PosVeiculos
+import com.example.rastreioonibus.PrevChegada
 import retrofit2.Response
-import java.lang.Exception
 
 class HttpUtils(private val api: RastreioOnibusApi) {
 
@@ -24,8 +25,20 @@ class HttpUtils(private val api: RastreioOnibusApi) {
         return api.autenticar(key.toString())
     }
 
-    suspend fun getLinhas(): List<Linhas>? {
-        return api.getLinhas(certificado).body()
+    suspend fun getPosVeiculos(): PosVeiculos? {
+        return api.getPosVeiculos(certificado).body()
+    }
+
+    suspend fun getLinhas(linha: Int): List<Linhas>? {
+        return api.getLinhas(certificado, linha).body()
+    }
+
+    suspend fun getParadas(term: String): List<Paradas>? {
+        return api.getParadas(certificado, term).body()
+    }
+
+    suspend fun getPrevChegadas(): PrevChegada? {
+        return api.getPrevChegadas(certificado, 340015329).body()
     }
 
     fun setCertificado(cert: String){

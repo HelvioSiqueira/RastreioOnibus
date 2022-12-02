@@ -13,16 +13,16 @@ import retrofit2.http.Query
 interface RastreioOnibusApi {
 
     @GET("Posicao")
-    fun getPosVeiculos(@Header("Cookie") certificado: String): Response<PosVeiculos>
+    suspend fun getPosVeiculos(@Header("Cookie") certificado: String): Response<PosVeiculos>
 
     @GET("Linha/Buscar")
     suspend fun getLinhas(@Header("Cookie") certificado: String, @Query("termosBusca") linha: Int): Response<List<Linhas>>
 
     @GET("Parada/Buscar")
-    fun getParadas(@Header("Cookie") certificado: String, @Query("termosBusca") termo: String): Response<Paradas>
+    suspend fun getParadas(@Header("Cookie") certificado: String, @Query("termosBusca") termo: String): Response<List<Paradas>>
 
-    @GET("Previsao")
-    fun getPrevChegadas(@Header("Cookie") certificado: String, @Query("codigoParada") codigo: Int): Response<PrevChegada>
+    @GET("Previsao/Parada")
+    suspend fun getPrevChegadas(@Header("Cookie") certificado: String, @Query("codigoParada") codigo: Int): Response<PrevChegada>
 
     @POST("Login/Autenticar")
     suspend fun autenticar(@Query("token") token: String): Response<Boolean>
