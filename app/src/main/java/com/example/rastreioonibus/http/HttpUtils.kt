@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.util.Log
 import com.example.rastreioonibus.Linhas
 import retrofit2.Response
+import java.lang.Exception
 
 class HttpUtils(private val api: RastreioOnibusApi) {
 
@@ -24,7 +25,7 @@ class HttpUtils(private val api: RastreioOnibusApi) {
     }
 
     suspend fun getLinhas(): List<Linhas>? {
-        return api.getLinhas().body()
+        return api.getLinhas(certificado).body()
     }
 
     fun setCertificado(cert: String){

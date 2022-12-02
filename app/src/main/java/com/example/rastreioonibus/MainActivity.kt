@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,9 +22,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         scope.launch {
-            val resposta = api.autenticar(applicationContext).body()
+            autenticarCookie()
+            Log.d("HSV", api.getLinhas().toString())
+        }
+    }
 
-            Log.d("HSV", resposta.toString())
+    private suspend fun autenticarCookie(){
+        try{
+            val certificado = api.autenticar(applicationContext).headers()["Set-Cookie"]
+
+            if(certificado != null){
+                api.setCertificado(certificado)
+            } else {
+                Log.d("HSV", "Cookie nulo")
+            }
+
+        } catch (e: Exception){
+            e.printStackTrace()
         }
     }
 }
