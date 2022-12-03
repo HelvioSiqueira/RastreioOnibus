@@ -12,10 +12,9 @@ import org.koin.android.ext.android.inject
 import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private val api: HttpUtils by inject()
-
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,8 +22,9 @@ class MainActivity : AppCompatActivity() {
 
         scope.launch {
             autenticarCookie()
-            Log.d("HSV", api.getPrevChegadas()!!.p.toString())
         }
+
+        showMapsFragment()
     }
 
     private suspend fun autenticarCookie(){
@@ -40,5 +40,14 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception){
             e.printStackTrace()
         }
+    }
+
+    private fun showMapsFragment(){
+        val fragment = MapsFragments.newInstance()
+
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.mainLayout, fragment, MapsFragments.TAG_FRAGMENT_MAPS)
+            .commit()
     }
 }
