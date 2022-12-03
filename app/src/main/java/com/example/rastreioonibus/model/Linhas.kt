@@ -1,4 +1,4 @@
-package com.example.rastreioonibus
+package com.example.rastreioonibus.model
 
 import java.io.Serializable
 

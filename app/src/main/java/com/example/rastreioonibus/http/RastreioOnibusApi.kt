@@ -1,7 +1,7 @@
 package com.example.rastreioonibus.http
 
-import com.example.rastreioonibus.Linhas
-import com.example.rastreioonibus.Paradas
+import com.example.rastreioonibus.model.Linhas
+import com.example.rastreioonibus.model.Paradas
 import com.example.rastreioonibus.PosVeiculos
 import com.example.rastreioonibus.PrevChegada
 import retrofit2.Response

@@ -1,6 +1,6 @@
 package com.example.rastreioonibus.di
 
-import com.example.rastreioonibus.API
+import com.example.rastreioonibus.utils.API
 import com.example.rastreioonibus.http.HttpUtils
 import com.example.rastreioonibus.http.RastreioOnibusApi
 import okhttp3.OkHttpClient
