@@ -39,6 +39,11 @@ android {
 
 dependencies {
 
+    //Locations
+    implementation "com.google.android.gms:play-services-location:$playservices_version"
+    //Maps Services
+    implementation "com.google.android.gms:play-services-maps:$map_version"
+
     //Koin
     implementation "io.insert-koin:koin-android:$koin_version"
 
