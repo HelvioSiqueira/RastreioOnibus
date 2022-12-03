@@ -3,7 +3,8 @@ package com.example.rastreioonibus
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.example.rastreioonibus.http.HttpUtils
+import com.example.rastreioonibus.http.HttpRepository
+import com.example.rastreioonibus.mapsInicio.MapsFragments
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -14,7 +15,7 @@ import java.lang.Exception
 class MainActivity : AppCompatActivity() {
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-    private val api: HttpUtils by inject()
+    private val api: HttpRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

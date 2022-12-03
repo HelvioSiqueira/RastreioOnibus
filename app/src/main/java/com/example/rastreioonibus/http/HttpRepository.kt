@@ -9,7 +9,7 @@ import com.example.rastreioonibus.PosVeiculos
 import com.example.rastreioonibus.PrevChegada
 import retrofit2.Response
 
-class HttpUtils(private val api: RastreioOnibusApi) {
+class HttpRepository(private val api: RastreioOnibusApi) {
 
     private var certificado: String = ""
 
