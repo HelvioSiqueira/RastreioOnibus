@@ -23,6 +23,8 @@ class MainActivity : AppCompatActivity() {
         scope.launch {
             autenticarCookie()
         }
+
+        showMapsFragment()
     }
 
     private suspend fun autenticarCookie(){
@@ -38,5 +40,14 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception){
             e.printStackTrace()
         }
+    }
+
+    private fun showMapsFragment(){
+        val fragment = MapsFragments.newInstance()
+
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.mainLayout, fragment, MapsFragments.TAG_FRAGMENT_MAPS)
+            .commit()
     }
 }
