@@ -1,4 +1,4 @@
-package com.example.rastreioonibus
+package com.example.rastreioonibus.model
 
 data class Paradas(
     //Código identificador da parada
