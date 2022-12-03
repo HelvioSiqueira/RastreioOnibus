@@ -29,16 +29,16 @@ class HttpUtils(private val api: RastreioOnibusApi) {
         return api.getPosVeiculos(certificado).body()
     }
 
-    suspend fun getLinhas(linha: Int): List<Linhas>? {
-        return api.getLinhas(certificado, linha).body()
+    suspend fun getLinhas(idLinha: Int): List<Linhas>? {
+        return api.getLinhas(certificado, idLinha).body()
     }
 
     suspend fun getParadas(term: String): List<Paradas>? {
         return api.getParadas(certificado, term).body()
     }
 
-    suspend fun getPrevChegadas(): PrevChegada? {
-        return api.getPrevChegadas(certificado, 340015329).body()
+    suspend fun getPrevChegadas(idParada: Int): PrevChegada? {
+        return api.getPrevChegadas(certificado, idParada).body()
     }
 
     fun setCertificado(cert: String){
