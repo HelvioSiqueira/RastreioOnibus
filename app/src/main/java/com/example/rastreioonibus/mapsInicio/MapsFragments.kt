@@ -1,10 +1,12 @@
 package com.example.rastreioonibus.mapsInicio
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.rastreioonibus.PosLinhas
 import com.example.rastreioonibus.databinding.LayoutMapsFragmentBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +27,7 @@ class MapsFragments: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return binding.root
     }
 
@@ -34,6 +36,7 @@ class MapsFragments: Fragment() {
 
         scope.launch{
             viewModel.autenticar(requireContext())
+            Log.d("HSV", viewModel.getPosVeiculos()!!.l.map(PosLinhas::vs).joinToString("\n"))
         }
     }
 
