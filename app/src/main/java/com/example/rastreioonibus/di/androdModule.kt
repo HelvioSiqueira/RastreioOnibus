@@ -2,7 +2,7 @@ package com.example.rastreioonibus.di
 
 import com.example.rastreioonibus.utils.API
 import com.example.rastreioonibus.http.HttpRepository
-import com.example.rastreioonibus.http.RastreioOnibusApi
+import com.example.rastreioonibus.http.OlhoVivoApi
 import com.example.rastreioonibus.mapsInicio.MapsViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -39,6 +39,6 @@ val androidModule = module {
             .client(httpClient.build())
             .build()
 
-        retrofit.create(RastreioOnibusApi::class.java)
+        retrofit.create(OlhoVivoApi::class.java)
     }
 }

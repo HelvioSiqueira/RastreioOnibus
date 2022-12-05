@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.rastreioonibus.PosLinhas
+import com.example.rastreioonibus.Veiculos
 import com.example.rastreioonibus.databinding.LayoutMapsFragmentBinding
+import com.example.rastreioonibus.model.Paradas
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,6 +25,9 @@ class MapsFragments: Fragment() {
         LayoutMapsFragmentBinding.inflate(layoutInflater)
     }
 
+    var listPosVeiculos = listOf<Veiculos>()
+    var listParadas = listOf<Paradas>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,7 +41,12 @@ class MapsFragments: Fragment() {
 
         scope.launch{
             viewModel.autenticar(requireContext())
-            Log.d("HSV", viewModel.getPosVeiculos()!!.l.map(PosLinhas::vs).joinToString("\n"))
+
+            listPosVeiculos = viewModel.getPosVeiculos()
+            listParadas = viewModel.getParadas("")
+
+
+            Log.d("HSV", listPosVeiculos.joinToString("\n"))
         }
     }
 

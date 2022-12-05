@@ -10,7 +10,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-interface RastreioOnibusApi {
+interface OlhoVivoApi {
 
     @GET("Posicao")
     suspend fun getPosVeiculos(@Header("Cookie") certificado: String): Response<PosVeiculos>
