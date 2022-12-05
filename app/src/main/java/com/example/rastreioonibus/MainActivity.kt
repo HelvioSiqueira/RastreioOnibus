@@ -3,7 +3,6 @@ package com.example.rastreioonibus
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.example.rastreioonibus.mapsInicio.MapsFragments
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,14 +18,5 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-    }
-
-    private fun showMapsFragment() {
-        val fragment = MapsFragments.newInstance()
-
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.mainLayout, fragment, MapsFragments.TAG_FRAGMENT_MAPS)
-            .commit()
     }
 }

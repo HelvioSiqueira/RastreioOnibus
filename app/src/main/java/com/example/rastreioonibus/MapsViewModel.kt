@@ -1,10 +1,8 @@
-package com.example.rastreioonibus.mapsInicio
+package com.example.rastreioonibus
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.rastreioonibus.PosLinhas
-import com.example.rastreioonibus.Veiculos
 import com.example.rastreioonibus.http.HttpRepository
 import com.example.rastreioonibus.model.Paradas
 import java.lang.Exception

@@ -3,7 +3,7 @@ package com.example.rastreioonibus.di
 import com.example.rastreioonibus.utils.API
 import com.example.rastreioonibus.http.HttpRepository
 import com.example.rastreioonibus.http.OlhoVivoApi
-import com.example.rastreioonibus.mapsInicio.MapsViewModel
+import com.example.rastreioonibus.MapsViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
