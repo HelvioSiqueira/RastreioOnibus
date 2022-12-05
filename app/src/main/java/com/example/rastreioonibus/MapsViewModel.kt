@@ -1,11 +1,10 @@
-package com.example.rastreioonibus.mapsInicio
+package com.example.rastreioonibus
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.rastreioonibus.PosLinhas
-import com.example.rastreioonibus.PosVeiculos
 import com.example.rastreioonibus.http.HttpRepository
+import com.example.rastreioonibus.model.Paradas
 import java.lang.Exception
 
 class MapsViewModel(private val repo: HttpRepository): ViewModel() {
@@ -24,7 +23,11 @@ class MapsViewModel(private val repo: HttpRepository): ViewModel() {
         }
     }
 
-    suspend fun getPosVeiculos(): PosVeiculos? {
-        return repo.getPosVeiculos()
+    suspend fun getPosVeiculos(): List<Veiculos> {
+        return repo.getPosVeiculos()!!.l.flatMap(PosLinhas::vs)
+    }
+
+    suspend fun getParadas(term: String): List<Paradas> {
+        return repo.getParadas(term) ?: emptyList()
     }
 }

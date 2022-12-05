@@ -2,23 +2,21 @@ package com.example.rastreioonibus
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.rastreioonibus.mapsInicio.MapsFragments
+import android.util.Log
 
 class MainActivity : AppCompatActivity() {
+
+    private val fragmentMap: AppMapFragment by lazy {
+        supportFragmentManager.findFragmentById(R.id.fragmentMap) as AppMapFragment
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        showMapsFragment()
-    }
+        fragmentMap.getMapAsync {
 
-    private fun showMapsFragment(){
-        val fragment = MapsFragments.newInstance()
+        }
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.mainLayout, fragment, MapsFragments.TAG_FRAGMENT_MAPS)
-            .commit()
     }
 }
