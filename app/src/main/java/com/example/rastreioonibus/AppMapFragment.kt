@@ -1,7 +1,6 @@
 package com.example.rastreioonibus
 
 import android.util.Log
-import android.widget.Toast
 import com.example.rastreioonibus.model.Paradas
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -11,7 +10,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
 class AppMapFragment : SupportMapFragment() {
@@ -80,15 +78,8 @@ class AppMapFragment : SupportMapFragment() {
                     MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_parada))
                         .position(LatLng(parada.py, parada.px))
+                        .title(parada.np)
                 )
-
-                this.setOnMarkerClickListener {
-                    Toast.makeText(requireContext(), parada.np, Toast.LENGTH_SHORT).show()
-                    it.title = parada.np
-                    it.snippet = "${parada.cp} - ${parada.ed}"
-                    it.showInfoWindow()
-                    true
-                }
             }
 
             listPosVeiculos.forEach {
@@ -97,9 +88,17 @@ class AppMapFragment : SupportMapFragment() {
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_bus))
                         .position(LatLng(it.py, it.px))
                         .title(it.p)
-                        .snippet((if (it.a) "Veiculo acessível para pessoas com deficiencia" else "Veiculo não acessível para pessoas com deficiencia"))
                 )
             }
+
+            googleMap.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener {
+
+                DetailsParada
+                    .newInstance(it.title ?: "")
+                    .show(childFragmentManager, DetailsParada.DIALOG_TAG)
+
+                true
+            })
         }
     }
 }
