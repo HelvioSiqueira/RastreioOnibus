@@ -25,16 +25,16 @@ class HttpRepository(private val api: OlhoVivoApi) {
         return api.autenticar(key.toString())
     }
 
-    suspend fun getPosVeiculos(): PosVeiculos? {
-        return api.getPosVeiculos(certificado).body()
+    suspend fun getPosVeiculos(): Response<PosVeiculos> {
+        return api.getPosVeiculos(certificado)
     }
 
     suspend fun getLinhas(idLinha: Int): List<Linhas>? {
         return api.getLinhas(certificado, idLinha).body()
     }
 
-    suspend fun getParadas(term: String): List<Paradas>? {
-        return api.getParadas(certificado, term).body()
+    suspend fun getParadas(term: String): Response<List<Paradas>> {
+        return api.getParadas(certificado, term)
     }
 
     suspend fun getPrevChegadas(idParada: Int): PrevChegada? {
