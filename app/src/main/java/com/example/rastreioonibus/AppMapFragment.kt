@@ -1,6 +1,7 @@
 package com.example.rastreioonibus
 
 import android.util.Log
+import android.widget.Toast
 import com.example.rastreioonibus.model.Paradas
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -8,6 +9,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
@@ -73,14 +75,20 @@ class AppMapFragment : SupportMapFragment() {
 
         googleMap?.run {
 
-            listParadas.forEach {
+            listParadas.forEach { parada ->
                 addMarker(
                     MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_parada))
-                        .position(LatLng(it.py, it.px))
-                        .title(it.np)
-                        .snippet("${it.cp} - ${it.ed}")
+                        .position(LatLng(parada.py, parada.px))
                 )
+
+                this.setOnMarkerClickListener {
+                    Toast.makeText(requireContext(), parada.np, Toast.LENGTH_SHORT).show()
+                    it.title = parada.np
+                    it.snippet = "${parada.cp} - ${parada.ed}"
+                    it.showInfoWindow()
+                    true
+                }
             }
 
             listPosVeiculos.forEach {

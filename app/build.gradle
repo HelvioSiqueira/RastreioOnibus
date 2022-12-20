@@ -40,6 +40,10 @@ android {
 
 dependencies {
 
+    //MaterialSearchView
+    implementation "com.github.mancj:MaterialSearchBar:$materialsearchview_version"
+
+    //Parceler
     implementation "org.parceler:parceler-api:$parceler_version"
     kapt "org.parceler:parceler:$parceler_version"
 
