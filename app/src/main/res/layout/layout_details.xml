@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -10,13 +11,27 @@
         android:padding="8dp">
 
         <TextView
-            android:id="@+id/titleParada"
+            android:id="@+id/npParada"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:autoSizeTextType="uniform"
+            android:maxLines="1"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@id/edParada"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Titulo da Parada" />
+
+        <TextView
+            android:id="@+id/edParada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/npParada"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Id da parada" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

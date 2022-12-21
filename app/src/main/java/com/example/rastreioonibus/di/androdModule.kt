@@ -18,7 +18,7 @@ val androidModule = module {
         HttpRepository(api = get())
     }
 
-    factory {
+    single {
         MapsViewModel(repo = get())
     }
 

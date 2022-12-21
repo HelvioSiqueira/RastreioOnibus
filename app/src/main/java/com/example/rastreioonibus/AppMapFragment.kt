@@ -78,7 +78,8 @@ class AppMapFragment : SupportMapFragment() {
                     MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_parada))
                         .position(LatLng(parada.py, parada.px))
-                        .title(parada.np)
+                        .title(parada.cp.toString())
+                        .snippet("parada")
                 )
             }
 
@@ -88,13 +89,14 @@ class AppMapFragment : SupportMapFragment() {
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_bus))
                         .position(LatLng(it.py, it.px))
                         .title(it.p)
+                        .snippet("veiculo")
                 )
             }
 
             googleMap.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener {
 
                 DetailsParada
-                    .newInstance(it.title ?: "")
+                    .newInstance(it.title ?: "", it.snippet!!)
                     .show(childFragmentManager, DetailsParada.DIALOG_TAG)
 
                 true
