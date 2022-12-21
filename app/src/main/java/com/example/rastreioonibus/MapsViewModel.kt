@@ -79,6 +79,10 @@ class MapsViewModel(private val repo: HttpRepository) : ViewModel() {
         }
     }
 
+    fun getSelectedParada(id: String) = listParadas.value?.find { it.cp == id.toInt() }
+
+    fun getSelectedVeiculo(id: String) = listPosVeiculos.value?.find { it.p == id }
+
     private fun haveError(error: String) {
         this.error.value = error
     }
