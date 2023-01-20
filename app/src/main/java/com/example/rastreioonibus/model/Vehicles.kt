@@ -2,15 +2,15 @@ package com.example.rastreioonibus.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Parades(
-    @SerializedName("cp")
-    val codeOfParade: Int = 0,
+data class Vehicles(
+    @SerializedName("p")
+    val prefixOfVehicle: String = "",
 
-    @SerializedName("np")
-    val nameOfParade: String = "",
+    @SerializedName("a")
+    val isAccessible: Boolean = false,
 
-    @SerializedName("ed")
-    val addressOfParade: String = "",
+    @SerializedName("ta")
+    val hourOfCapture: String = "",
 
     @SerializedName("py")
     val latitude: Double = 0.0,

@@ -59,7 +59,7 @@ class MapsViewModel(private val repo: HttpRepository) : ViewModel() {
 
             if (response.isSuccessful) {
                 listPosVehicles.value =
-                    response.body()?.l?.flatMap(PosLines::vs) ?: emptyList()
+                    response.body()?.lines?.flatMap(PosLines::listOfVehicles) ?: emptyList()
 
             } else {
                 haveError(response.message())
@@ -81,9 +81,9 @@ class MapsViewModel(private val repo: HttpRepository) : ViewModel() {
         }
     }
 
-    fun getSelectedParade(id: String) = listParades.value?.find { it.cp == id.toInt() }
+    fun getSelectedParade(id: String) = listParades.value?.find { it.codeOfParade == id.toInt() }
 
-    fun getSelectedVehicle(id: String) = listPosVehicles.value?.find { it.p == id }
+    fun getSelectedVehicle(id: String) = listPosVehicles.value?.find { it.prefixOfVehicle == id }
 
     private fun haveError(error: String) {
         this.error.value = error

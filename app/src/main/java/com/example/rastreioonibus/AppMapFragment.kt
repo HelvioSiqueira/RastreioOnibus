@@ -77,8 +77,8 @@ class AppMapFragment : SupportMapFragment() {
                 addMarker(
                     MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_parada))
-                        .position(LatLng(parada.py, parada.px))
-                        .title(parada.cp.toString())
+                        .position(LatLng(parada.latitude, parada.longitude))
+                        .title(parada.codeOfParade.toString())
                         .snippet("parada")
                 )
             }
@@ -87,8 +87,8 @@ class AppMapFragment : SupportMapFragment() {
                 addMarker(
                     MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_bus))
-                        .position(LatLng(it.py, it.px))
-                        .title(it.p)
+                        .position(LatLng(it.latitude, it.longitude))
+                        .title(it.prefixOfVehicle)
                         .snippet("veiculo")
                 )
             }

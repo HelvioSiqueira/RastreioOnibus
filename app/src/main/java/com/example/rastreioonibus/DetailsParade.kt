@@ -34,14 +34,14 @@ class DetailsParade : DialogFragment() {
             "parada" ->{
                 val parade = viewModel.getSelectedParade(idParadeOrVehicle!!)
 
-                npParade.text = parade?.np
-                edParade.text = parade?.ed
+                npParade.text = parade?.nameOfParade
+                edParade.text = parade?.addressOfParade
             }
 
             "veiculo" ->{
                 val vehicle = viewModel.getSelectedVehicle(idParadeOrVehicle!!)
 
-                npParade.text = vehicle?.p
+                npParade.text = vehicle?.prefixOfVehicle
                 edParade.visibility = View.GONE
             }
         }
