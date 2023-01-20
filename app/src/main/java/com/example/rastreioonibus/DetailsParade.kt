@@ -9,12 +9,12 @@ import androidx.fragment.app.DialogFragment
 import com.example.rastreioonibus.databinding.LayoutDetailsBinding
 import org.koin.android.ext.android.inject
 
-class DetailsParada : DialogFragment() {
+class DetailsParade : DialogFragment() {
 
     private val viewModel: MapsViewModel by inject()
 
-    private lateinit var npParada: TextView
-    private lateinit var edParada: TextView
+    private lateinit var npParade: TextView
+    private lateinit var edParade: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,25 +24,25 @@ class DetailsParada : DialogFragment() {
         val binding = LayoutDetailsBinding.inflate(layoutInflater)
 
         val typeSelected = arguments?.getString(EXTRA_TYPE)
-        val idParadaOuVeiculo = arguments?.getString(EXTRA_TITLE)
+        val idParadeOrVehicle = arguments?.getString(EXTRA_TITLE)
 
-        npParada = binding.npParada
-        edParada = binding.edParada
+        npParade = binding.npParada
+        edParade = binding.edParada
 
         when(typeSelected){
 
             "parada" ->{
-                val parada = viewModel.getSelectedParada(idParadaOuVeiculo!!)
+                val parade = viewModel.getSelectedParade(idParadeOrVehicle!!)
 
-                npParada.text = parada?.np
-                edParada.text = parada?.ed
+                npParade.text = parade?.np
+                edParade.text = parade?.ed
             }
 
             "veiculo" ->{
-                val veiculo = viewModel.getSelectedVeiculo(idParadaOuVeiculo!!)
+                val vehicle = viewModel.getSelectedVehicle(idParadeOrVehicle!!)
 
-                npParada.text = veiculo?.p
-                edParada.visibility = View.GONE
+                npParade.text = vehicle?.p
+                edParade.visibility = View.GONE
             }
         }
 
@@ -54,9 +54,9 @@ class DetailsParada : DialogFragment() {
         private const val EXTRA_TITLE = "title"
         private const val EXTRA_TYPE = "type"
 
-        fun newInstance(idParadaOuVeiculo: String, type: String) = DetailsParada().apply {
+        fun newInstance(idParadeOrVehicle: String, type: String) = DetailsParade().apply {
             arguments = Bundle().apply {
-                putString(EXTRA_TITLE, idParadaOuVeiculo)
+                putString(EXTRA_TITLE, idParadeOrVehicle)
                 putString(EXTRA_TYPE, type)
             }
         }

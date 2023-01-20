@@ -1,14 +1,14 @@
-package com.example.rastreioonibus
+package com.example.rastreioonibus.model
 
-data class PosVeiculos(
+data class PosVehicles(
     // Horário de referência da geração das informações
     val hr: String = "",
 
     // Relação de linhas localizadas
-    val l: List<PosLinhas> = emptyList()
+    val l: List<PosLines> = emptyList()
 )
 
-data class PosLinhas(
+data class PosLines(
     //Letreiro completo
     val c: String = "",
 
@@ -29,10 +29,10 @@ data class PosLinhas(
     val qv: Int = 0,
 
     // Relação de veículos localizados
-    val vs: List<Veiculos> = emptyList()
+    val vs: List<Vehicles> = emptyList()
 )
 
-data class Veiculos(
+data class Vehicles(
     // Prefixo do veículo
     val p: String = "",
 

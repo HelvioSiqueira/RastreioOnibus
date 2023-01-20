@@ -1,15 +1,15 @@
-package com.example.rastreioonibus
+package com.example.rastreioonibus.model
 
-data class PrevChegada(
+data class PrevArrival(
 
     // Horário de referência da geração das informações
     val hr: String = "",
 
     //Representa um ponto de parada
-    val p: PrevParada? = null
+    val p: PrevParade? = null
 )
 
-data class PrevParada(
+data class PrevParade(
     //Relação de veículos localizados onde:
     val cp: Int = 0,
 
@@ -23,10 +23,10 @@ data class PrevParada(
     val px: Double = 0.0,
 
     // Relação de linhas localizadas
-    val l: List<PrevLinha> = emptyList()
+    val l: List<PrevLine> = emptyList()
 )
 
-data class PrevLinha(
+data class PrevLine(
 
     // Letreiro completo
     val c: String = "",
@@ -48,10 +48,10 @@ data class PrevLinha(
     val qv: Int = 0,
 
     //Relação de veículos localizados
-    val vs: List<PrevVeiculo> = emptyList()
+    val vs: List<PrevVehicle> = emptyList()
 )
 
-data class PrevVeiculo(
+data class PrevVehicle(
     //Prefixo do veículo
     val p: String = "",
 

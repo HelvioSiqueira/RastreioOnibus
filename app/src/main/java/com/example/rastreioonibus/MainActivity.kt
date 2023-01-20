@@ -1,18 +1,10 @@
 package com.example.rastreioonibus
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
-import android.widget.PopupMenu
 import android.widget.Toast
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
-import androidx.lifecycle.Lifecycle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.rastreioonibus.databinding.ActivityMainBinding
-import com.google.android.material.navigation.NavigationView
 import com.mancj.materialsearchbar.MaterialSearchBar
 
 class MainActivity :

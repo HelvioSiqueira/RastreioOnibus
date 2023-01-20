@@ -3,17 +3,17 @@ package com.example.rastreioonibus.http
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import com.example.rastreioonibus.model.Linhas
-import com.example.rastreioonibus.model.Paradas
-import com.example.rastreioonibus.PosVeiculos
-import com.example.rastreioonibus.PrevChegada
+import com.example.rastreioonibus.model.Lines
+import com.example.rastreioonibus.model.Parades
+import com.example.rastreioonibus.model.PosVehicles
+import com.example.rastreioonibus.model.PrevArrival
 import retrofit2.Response
 
 class HttpRepository(private val api: OlhoVivoApi) {
 
     private var certificado: String = ""
 
-    suspend fun autenticar(context: Context): Response<Boolean> {
+    suspend fun authenticator(context: Context): Response<Boolean> {
         val ai: ApplicationInfo = context.packageManager
             .getApplicationInfo(
                 context.packageName,
@@ -22,26 +22,26 @@ class HttpRepository(private val api: OlhoVivoApi) {
 
         val key = ai.metaData["keyValue"]
 
-        return api.autenticar(key.toString())
+        return api.authenticate(key.toString())
     }
 
-    suspend fun getPosVeiculos(): Response<PosVeiculos> {
-        return api.getPosVeiculos(certificado)
+    suspend fun getPosVehicles(): Response<PosVehicles> {
+        return api.getPosVehicles(certificado)
     }
 
-    suspend fun getLinhas(idLinha: Int): List<Linhas>? {
-        return api.getLinhas(certificado, idLinha).body()
+    suspend fun getLines(idLinha: Int): List<Lines>? {
+        return api.getLines(certificado, idLinha).body()
     }
 
-    suspend fun getParadas(term: String): Response<List<Paradas>> {
-        return api.getParadas(certificado, term)
+    suspend fun getParades(term: String): Response<List<Parades>> {
+        return api.getParades(certificado, term)
     }
 
-    suspend fun getPrevChegadas(idParada: Int): PrevChegada? {
-        return api.getPrevChegadas(certificado, idParada).body()
+    suspend fun getPrevArrival(idParada: Int): PrevArrival? {
+        return api.getPrevArrival(certificado, idParada).body()
     }
 
-    fun setCertificado(cert: String){
+    fun setCertificate(cert: String){
         certificado = cert
     }
 }

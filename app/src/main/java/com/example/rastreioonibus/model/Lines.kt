@@ -2,7 +2,7 @@ package com.example.rastreioonibus.model
 
 import java.io.Serializable
 
-data class Linhas(
+data class Lines(
 
     //Código identificador da linha
     val cl: Int = 0,

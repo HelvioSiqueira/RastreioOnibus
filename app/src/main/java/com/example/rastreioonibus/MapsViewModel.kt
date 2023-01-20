@@ -7,7 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rastreioonibus.http.HttpRepository
-import com.example.rastreioonibus.model.Paradas
+import com.example.rastreioonibus.model.Parades
+import com.example.rastreioonibus.model.PosLines
+import com.example.rastreioonibus.model.Vehicles
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -15,32 +17,32 @@ class MapsViewModel(private val repo: HttpRepository) : ViewModel() {
 
     val error = MutableLiveData<String>()
 
-    val listPosVeiculos = MutableLiveData<List<Veiculos>>()
-    val listParadas = MutableLiveData<List<Paradas>>()
+    val listPosVehicles = MutableLiveData<List<Vehicles>>()
+    val listParades = MutableLiveData<List<Parades>>()
 
-    val isAutenticate = MutableLiveData<Boolean>().apply {
+    val isAuthenticate = MutableLiveData<Boolean>().apply {
         value = false
     }
 
-    val mediator = MediatorLiveData<Boolean>().apply {
-        addSource(listPosVeiculos) {
+    val isLoading = MediatorLiveData<Boolean>().apply {
+        addSource(listPosVehicles) {
             this.value =
-                it.isNotEmpty() && listParadas.value?.isNotEmpty() ?: false
+                it.isNotEmpty() && listParades.value?.isNotEmpty() ?: false
         }
-        addSource(listParadas) {
+        addSource(listParades) {
             this.value =
-                it.isNotEmpty() && listPosVeiculos.value?.isNotEmpty() ?: false
+                it.isNotEmpty() && listPosVehicles.value?.isNotEmpty() ?: false
         }
     }
 
-    fun autenticar(context: Context) {
+    fun authenticate(context: Context) {
         viewModelScope.launch {
             try {
-                val certificado = repo.autenticar(context).headers()["Set-Cookie"]
+                val certificate = repo.authenticator(context).headers()["Set-Cookie"]
 
-                if (certificado != null) {
-                    repo.setCertificado(certificado)
-                    isAutenticate.postValue(true)
+                if (certificate != null) {
+                    repo.setCertificate(certificate)
+                    isAuthenticate.postValue(true)
 
                 } else {
                     Log.d("HSV", "Cookie nulo")
@@ -51,13 +53,13 @@ class MapsViewModel(private val repo: HttpRepository) : ViewModel() {
         }
     }
 
-    fun getPosVeiculos() {
+    fun getPosVehicles() {
         viewModelScope.launch {
-            val response = repo.getPosVeiculos()
+            val response = repo.getPosVehicles()
 
             if (response.isSuccessful) {
-                listPosVeiculos.value =
-                    response.body()?.l?.flatMap(PosLinhas::vs) ?: emptyList()
+                listPosVehicles.value =
+                    response.body()?.l?.flatMap(PosLines::vs) ?: emptyList()
 
             } else {
                 haveError(response.message())
@@ -65,12 +67,12 @@ class MapsViewModel(private val repo: HttpRepository) : ViewModel() {
         }
     }
 
-    fun getParadas(term: String) {
+    fun getParades(term: String) {
         viewModelScope.launch {
-            val response = repo.getParadas(term)
+            val response = repo.getParades(term)
 
             if (response.isSuccessful) {
-                listParadas.value =
+                listParades.value =
                     response.body() ?: emptyList()
 
             } else {
@@ -79,9 +81,9 @@ class MapsViewModel(private val repo: HttpRepository) : ViewModel() {
         }
     }
 
-    fun getSelectedParada(id: String) = listParadas.value?.find { it.cp == id.toInt() }
+    fun getSelectedParade(id: String) = listParades.value?.find { it.cp == id.toInt() }
 
-    fun getSelectedVeiculo(id: String) = listPosVeiculos.value?.find { it.p == id }
+    fun getSelectedVehicle(id: String) = listPosVehicles.value?.find { it.p == id }
 
     private fun haveError(error: String) {
         this.error.value = error

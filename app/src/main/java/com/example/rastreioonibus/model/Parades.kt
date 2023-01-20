@@ -1,6 +1,6 @@
 package com.example.rastreioonibus.model
 
-data class Paradas(
+data class Parades(
     //Código identificador da parada
     val cp: Int = 0,
 

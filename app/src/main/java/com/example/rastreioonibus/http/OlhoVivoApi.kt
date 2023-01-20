@@ -1,9 +1,9 @@
 package com.example.rastreioonibus.http
 
-import com.example.rastreioonibus.model.Linhas
-import com.example.rastreioonibus.model.Paradas
-import com.example.rastreioonibus.PosVeiculos
-import com.example.rastreioonibus.PrevChegada
+import com.example.rastreioonibus.model.Lines
+import com.example.rastreioonibus.model.Parades
+import com.example.rastreioonibus.model.PrevArrival
+import com.example.rastreioonibus.model.PosVehicles
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -13,17 +13,17 @@ import retrofit2.http.Query
 interface OlhoVivoApi {
 
     @GET("Posicao")
-    suspend fun getPosVeiculos(@Header("Cookie") certificado: String): Response<PosVeiculos>
+    suspend fun getPosVehicles(@Header("Cookie") certificate: String): Response<PosVehicles>
 
     @GET("Linha/Buscar")
-    suspend fun getLinhas(@Header("Cookie") certificado: String, @Query("termosBusca") linha: Int): Response<List<Linhas>>
+    suspend fun getLines(@Header("Cookie") certificate: String, @Query("termosBusca") line: Int): Response<List<Lines>>
 
     @GET("Parada/Buscar")
-    suspend fun getParadas(@Header("Cookie") certificado: String, @Query("termosBusca") termo: String): Response<List<Paradas>>
+    suspend fun getParades(@Header("Cookie") certificate: String, @Query("termosBusca") term: String): Response<List<Parades>>
 
     @GET("Previsao/Parada")
-    suspend fun getPrevChegadas(@Header("Cookie") certificado: String, @Query("codigoParada") codigo: Int): Response<PrevChegada>
+    suspend fun getPrevArrival(@Header("Cookie") certificate: String, @Query("codigoParada") coding: Int): Response<PrevArrival>
 
     @POST("Login/Autenticar")
-    suspend fun autenticar(@Query("token") token: String): Response<Boolean>
+    suspend fun authenticate(@Query("token") token: String): Response<Boolean>
 }

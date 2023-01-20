@@ -1,42 +1,42 @@
 package com.example.rastreioonibus
 
 import android.util.Log
-import com.example.rastreioonibus.model.Paradas
+import com.example.rastreioonibus.model.Parades
+import com.example.rastreioonibus.model.Vehicles
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import org.koin.android.ext.android.inject
 
 class AppMapFragment : SupportMapFragment() {
     private val viewModel: MapsViewModel by inject()
 
-    private var listPosVeiculos = listOf<Veiculos>()
-    private var listParadas = listOf<Paradas>()
+    private var listPosVehicles = listOf<Vehicles>()
+    private var listParades = listOf<Parades>()
 
     private var googleMap: GoogleMap? = null
 
     override fun getMapAsync(callback: OnMapReadyCallback) {
 
-        viewModel.autenticar(requireContext())
+        viewModel.authenticate(requireContext())
 
-        viewModel.isAutenticate.observe(this) {
+        viewModel.isAuthenticate.observe(this) {
             if (it) {
-                viewModel.getPosVeiculos()
-                viewModel.getParadas("")
+                viewModel.getPosVehicles()
+                viewModel.getParades("")
             }
         }
 
-        viewModel.listParadas.observe(this) {
-            listParadas = it
+        viewModel.listParades.observe(this) {
+            listParades = it
         }
 
-        viewModel.listPosVeiculos.observe(this) {
-            listPosVeiculos = it
+        viewModel.listPosVehicles.observe(this) {
+            listPosVehicles = it
         }
 
         super.getMapAsync {
@@ -60,20 +60,20 @@ class AppMapFragment : SupportMapFragment() {
             uiSettings.isScrollGesturesEnabled = true
         }
 
-        viewModel.mediator.observe(this) {
+        viewModel.isLoading.observe(this) {
             if (it) {
                 fillMap(map)
             }
         }
 
-        Log.d("HSV", listParadas.size.toString())
+        Log.d("HSV", listParades.size.toString())
     }
 
     private fun fillMap(googleMap: GoogleMap?) {
 
         googleMap?.run {
 
-            listParadas.forEach { parada ->
+            listParades.forEach { parada ->
                 addMarker(
                     MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_parada))
@@ -83,7 +83,7 @@ class AppMapFragment : SupportMapFragment() {
                 )
             }
 
-            listPosVeiculos.forEach {
+            listPosVehicles.forEach {
                 addMarker(
                     MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_bus))
@@ -95,9 +95,9 @@ class AppMapFragment : SupportMapFragment() {
 
             googleMap.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener {
 
-                DetailsParada
+                DetailsParade
                     .newInstance(it.title ?: "", it.snippet!!)
-                    .show(childFragmentManager, DetailsParada.DIALOG_TAG)
+                    .show(childFragmentManager, DetailsParade.DIALOG_TAG)
 
                 true
             })
