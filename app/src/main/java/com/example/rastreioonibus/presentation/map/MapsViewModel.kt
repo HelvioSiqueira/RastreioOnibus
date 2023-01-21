@@ -1,11 +1,9 @@
 package com.example.rastreioonibus.presentation.map
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.rastreioonibus.data.repository.HttpRepository
 import com.example.rastreioonibus.domain.model.Parades
 import com.example.rastreioonibus.domain.model.PosLines
@@ -13,7 +11,7 @@ import com.example.rastreioonibus.domain.model.Vehicles
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class MapsViewModel(private val repo: HttpRepository) : ViewModel() {
+class MapsViewModel(private val repo: HttpRepository, app: Application) : AndroidViewModel(app) {
 
     val error = MutableLiveData<String>()
 
@@ -35,7 +33,11 @@ class MapsViewModel(private val repo: HttpRepository) : ViewModel() {
         }
     }
 
-    fun authenticate(context: Context) {
+    init {
+        authenticate(app.applicationContext)
+    }
+
+    private fun authenticate(context: Context) {
         viewModelScope.launch {
             try {
                 val certificate = repo.authenticator(context).headers()["Set-Cookie"]

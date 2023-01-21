@@ -2,6 +2,7 @@ package com.example.rastreioonibus.presentation.map
 
 import android.util.Log
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import com.example.rastreioonibus.R
@@ -19,23 +20,20 @@ import org.koin.android.ext.android.inject
 
 class AppMapFragment : SupportMapFragment() {
     private val viewModel: MapsViewModel by inject()
+    private var googleMap: GoogleMap? = null
 
     private var listPosVehicles = listOf<Vehicles>()
     private var listParades = listOf<Parades>()
 
-    private var googleMap: GoogleMap? = null
-
     private lateinit var cardLoading: CardView
     private lateinit var txtMessage: TextView
+    private lateinit var progressBar: ProgressBar
 
     override fun getMapAsync(callback: OnMapReadyCallback) {
 
         cardLoading = requireActivity().cardLoading
         txtMessage = requireActivity().txtMessage
-
-        requireActivity().cardLoading.visibility = View.VISIBLE
-
-        viewModel.authenticate(requireContext())
+        progressBar = requireActivity().progressBar
 
         viewModel.isAuthenticate.observe(this) {
             if (it) {
@@ -60,17 +58,23 @@ class AppMapFragment : SupportMapFragment() {
     }
 
     private fun initMap(map: GoogleMap?) {
+        val origin = LatLng(-23.561706, -46.655981)
+
         googleMap = map?.apply {
             mapType = GoogleMap.MAP_TYPE_NORMAL
         }
-
-        val origin = LatLng(-23.561706, -46.655981)
 
         googleMap?.run {
             animateCamera(CameraUpdateFactory.newLatLngZoom(origin, 15F))
             uiSettings.isZoomControlsEnabled = true
             uiSettings.isMyLocationButtonEnabled = true
             uiSettings.isScrollGesturesEnabled = true
+        }
+
+        viewModel.error.observe(this) {
+            txtMessage.text = resources.getString(R.string.txt_not_successful_response)
+            progressBar.visibility = View.GONE
+            cardLoading.visibility = View.VISIBLE
         }
 
         viewModel.endLoading.observe(this) {
@@ -81,36 +85,32 @@ class AppMapFragment : SupportMapFragment() {
                 cardLoading.visibility = View.VISIBLE
             }
         }
-
-        Log.d("HSV", listParades.size.toString())
     }
 
     private fun fillMap(googleMap: GoogleMap?) {
-
         googleMap?.run {
 
-            listParades.forEach { parada ->
+            listParades.forEach { parade ->
                 addMarker(
                     MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_parada))
-                        .position(LatLng(parada.latitude, parada.longitude))
-                        .title(parada.codeOfParade.toString())
+                        .position(LatLng(parade.latitude, parade.longitude))
+                        .title(parade.codeOfParade.toString())
                         .snippet("parada")
                 )
             }
 
-            listPosVehicles.forEach {
+            listPosVehicles.forEach { vehicle ->
                 addMarker(
                     MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_bus))
-                        .position(LatLng(it.latitude, it.longitude))
-                        .title(it.prefixOfVehicle)
+                        .position(LatLng(vehicle.latitude, vehicle.longitude))
+                        .title(vehicle.prefixOfVehicle)
                         .snippet("veiculo")
                 )
             }
 
             googleMap.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener {
-
                 DetailsDialog.newInstance(it.title ?: "", it.snippet!!)
                     .show(childFragmentManager, DetailsDialog.DIALOG_TAG)
 

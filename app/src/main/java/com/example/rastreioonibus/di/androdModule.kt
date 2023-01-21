@@ -19,7 +19,7 @@ val androidModule = module {
     }
 
     single {
-        MapsViewModel(repo = get())
+        MapsViewModel(repo = get(), app = get())
     }
 
     single {
