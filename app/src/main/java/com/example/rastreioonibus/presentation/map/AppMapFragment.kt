@@ -1,10 +1,13 @@
 package com.example.rastreioonibus.presentation.map
 
-import android.util.Log
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.lifecycle.lifecycleScope
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.domain.model.Parades
 import com.example.rastreioonibus.domain.model.Vehicles
@@ -16,6 +19,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class AppMapFragment : SupportMapFragment() {
@@ -35,25 +39,31 @@ class AppMapFragment : SupportMapFragment() {
         txtMessage = requireActivity().txtMessage
         progressBar = requireActivity().progressBar
 
-        viewModel.isAuthenticate.observe(this) {
+        networkCallback()
+
+        super.getMapAsync {
+            googleMap = it
+            initMap(googleMap)
+            callback.onMapReady(googleMap!!)
+        }
+    }
+
+    private fun init(){
+        viewModel.authenticate(requireContext())
+
+        viewModel.isAuthenticate.observe(viewLifecycleOwner) {
             if (it) {
                 viewModel.getPosVehicles()
                 viewModel.getParades("")
             }
         }
 
-        viewModel.listParades.observe(this) {
+        viewModel.listParades.observe(viewLifecycleOwner) {
             listParades = it
         }
 
-        viewModel.listPosVehicles.observe(this) {
+        viewModel.listPosVehicles.observe(viewLifecycleOwner) {
             listPosVehicles = it
-        }
-
-        super.getMapAsync {
-            googleMap = it
-            initMap(googleMap)
-            callback.onMapReady(googleMap!!)
         }
     }
 
@@ -72,9 +82,7 @@ class AppMapFragment : SupportMapFragment() {
         }
 
         viewModel.error.observe(this) {
-            txtMessage.text = resources.getString(R.string.txt_not_successful_response)
-            progressBar.visibility = View.GONE
-            cardLoading.visibility = View.VISIBLE
+            showMessage(resources.getString(R.string.txt_not_successful_response))
         }
 
         viewModel.endLoading.observe(this) {
@@ -117,5 +125,33 @@ class AppMapFragment : SupportMapFragment() {
                 true
             })
         }
+    }
+
+    fun showMessage(message: String){
+        txtMessage.text = message
+        progressBar.visibility = View.GONE
+        cardLoading.visibility = View.VISIBLE
+    }
+
+    private fun networkCallback(){
+
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        connectivityManager.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback(){
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+
+                lifecycleScope.launch {
+                    init()
+                }
+            }
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                lifecycleScope.launch {
+                    showMessage(resources.getString(R.string.txt_no_conection))
+                }
+            }
+        })
     }
 }

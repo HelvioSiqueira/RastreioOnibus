@@ -37,7 +37,7 @@ class MapsViewModel(private val repo: HttpRepository, app: Application) : Androi
         authenticate(app.applicationContext)
     }
 
-    private fun authenticate(context: Context) {
+    fun authenticate(context: Context) {
         viewModelScope.launch {
             try {
                 val certificate = repo.authenticator(context).headers()["Set-Cookie"]
