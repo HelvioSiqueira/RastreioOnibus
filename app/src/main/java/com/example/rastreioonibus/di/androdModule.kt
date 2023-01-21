@@ -1,9 +1,9 @@
 package com.example.rastreioonibus.di
 
-import com.example.rastreioonibus.data.util.API
-import com.example.rastreioonibus.data.repository.HttpRepository
-import com.example.rastreioonibus.data.http.OlhoVivoApi
-import com.example.rastreioonibus.presentation.map.MapsViewModel
+import com.example.rastreioonibus.utils.API
+import com.example.rastreioonibus.http.HttpRepository
+import com.example.rastreioonibus.http.OlhoVivoApi
+import com.example.rastreioonibus.MapsViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
