@@ -24,7 +24,7 @@ class MapsViewModel(private val repo: HttpRepository) : ViewModel() {
         value = false
     }
 
-    val isLoading = MediatorLiveData<Boolean>().apply {
+    val endLoading = MediatorLiveData<Boolean>().apply {
         addSource(listPosVehicles) {
             this.value =
                 it.isNotEmpty() && listParades.value?.isNotEmpty() ?: false
