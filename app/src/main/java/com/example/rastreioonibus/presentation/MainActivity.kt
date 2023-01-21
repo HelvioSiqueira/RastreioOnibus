@@ -1,10 +1,12 @@
-package com.example.rastreioonibus
+package com.example.rastreioonibus.presentation
 
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ActivityMainBinding
+import com.example.rastreioonibus.presentation.map.AppMapFragment
 import com.mancj.materialsearchbar.MaterialSearchBar
 
 class MainActivity :

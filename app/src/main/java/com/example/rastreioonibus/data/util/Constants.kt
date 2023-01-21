@@ -1,3 +1,3 @@
-package com.example.rastreioonibus.utils
+package com.example.rastreioonibus.data.util
 
 const val API = "http://api.olhovivo.sptrans.com.br/v2.1/"

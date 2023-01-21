@@ -1,4 +1,4 @@
-package com.example.rastreioonibus.model
+package com.example.rastreioonibus.domain.model
 
 import com.google.gson.annotations.SerializedName
 

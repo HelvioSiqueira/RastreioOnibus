@@ -1,4 +1,4 @@
-package com.example.rastreioonibus
+package com.example.rastreioonibus.presentation.map
 
 import android.os.Bundle
 import android.view.LayoutInflater

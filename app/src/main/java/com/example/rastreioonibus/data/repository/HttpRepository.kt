@@ -1,12 +1,13 @@
-package com.example.rastreioonibus.http
+package com.example.rastreioonibus.data.repository
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import com.example.rastreioonibus.model.Lines
-import com.example.rastreioonibus.model.Parades
-import com.example.rastreioonibus.model.PosVehicles
-import com.example.rastreioonibus.model.PrevArrival
+import com.example.rastreioonibus.data.http.OlhoVivoApi
+import com.example.rastreioonibus.domain.model.Lines
+import com.example.rastreioonibus.domain.model.Parades
+import com.example.rastreioonibus.domain.model.PosVehicles
+import com.example.rastreioonibus.domain.model.PrevArrival
 import retrofit2.Response
 
 class HttpRepository(private val api: OlhoVivoApi) {

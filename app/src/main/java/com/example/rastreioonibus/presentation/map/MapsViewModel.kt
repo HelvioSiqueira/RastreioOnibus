@@ -1,4 +1,4 @@
-package com.example.rastreioonibus
+package com.example.rastreioonibus.presentation.map
 
 import android.content.Context
 import android.util.Log
@@ -6,10 +6,10 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rastreioonibus.http.HttpRepository
-import com.example.rastreioonibus.model.Parades
-import com.example.rastreioonibus.model.PosLines
-import com.example.rastreioonibus.model.Vehicles
+import com.example.rastreioonibus.data.repository.HttpRepository
+import com.example.rastreioonibus.domain.model.Parades
+import com.example.rastreioonibus.domain.model.PosLines
+import com.example.rastreioonibus.domain.model.Vehicles
 import kotlinx.coroutines.launch
 import java.lang.Exception
 

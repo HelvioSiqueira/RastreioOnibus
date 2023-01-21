@@ -1,8 +1,9 @@
-package com.example.rastreioonibus
+package com.example.rastreioonibus.presentation.map
 
 import android.util.Log
-import com.example.rastreioonibus.model.Parades
-import com.example.rastreioonibus.model.Vehicles
+import com.example.rastreioonibus.R
+import com.example.rastreioonibus.domain.model.Parades
+import com.example.rastreioonibus.domain.model.Vehicles
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -95,8 +96,7 @@ class AppMapFragment : SupportMapFragment() {
 
             googleMap.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener {
 
-                DetailsParade
-                    .newInstance(it.title ?: "", it.snippet!!)
+                DetailsParade.newInstance(it.title ?: "", it.snippet!!)
                     .show(childFragmentManager, DetailsParade.DIALOG_TAG)
 
                 true
