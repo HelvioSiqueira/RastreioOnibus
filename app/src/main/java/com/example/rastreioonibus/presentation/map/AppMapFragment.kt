@@ -1,7 +1,14 @@
 package com.example.rastreioonibus.presentation.map
 
+import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import com.example.rastreioonibus.R
+import com.example.rastreioonibus.databinding.ActivityMainBinding
 import com.example.rastreioonibus.domain.model.Parades
 import com.example.rastreioonibus.domain.model.Vehicles
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -11,6 +18,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 import org.koin.android.ext.android.inject
 
 class AppMapFragment : SupportMapFragment() {
@@ -21,7 +30,15 @@ class AppMapFragment : SupportMapFragment() {
 
     private var googleMap: GoogleMap? = null
 
+    private lateinit var cardLoading: CardView
+    private lateinit var txtMessage: TextView
+
     override fun getMapAsync(callback: OnMapReadyCallback) {
+
+        cardLoading = requireActivity().cardLoading
+        txtMessage = requireActivity().txtMessage
+
+        requireActivity().cardLoading.visibility = View.VISIBLE
 
         viewModel.authenticate(requireContext())
 
@@ -63,7 +80,11 @@ class AppMapFragment : SupportMapFragment() {
 
         viewModel.isLoading.observe(this) {
             if (it) {
+                cardLoading.visibility = View.GONE
                 fillMap(map)
+            } else {
+                cardLoading.visibility = View.VISIBLE
+
             }
         }
 
@@ -96,8 +117,8 @@ class AppMapFragment : SupportMapFragment() {
 
             googleMap.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener {
 
-                DetailsParade.newInstance(it.title ?: "", it.snippet!!)
-                    .show(childFragmentManager, DetailsParade.DIALOG_TAG)
+                DetailsDialog.newInstance(it.title ?: "", it.snippet!!)
+                    .show(childFragmentManager, DetailsDialog.DIALOG_TAG)
 
                 true
             })

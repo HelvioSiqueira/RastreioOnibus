@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparente">#00FFFFFF</color>
     <color name="red_300">#F0645E</color>
+    <color name="opaque_black">#4D000000</color>
+    <color name="gray">#6D6F74</color>
 </resources>

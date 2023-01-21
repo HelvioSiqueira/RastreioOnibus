@@ -9,7 +9,7 @@ import androidx.fragment.app.DialogFragment
 import com.example.rastreioonibus.databinding.LayoutDetailsBinding
 import org.koin.android.ext.android.inject
 
-class DetailsParade : DialogFragment() {
+class DetailsDialog : DialogFragment() {
 
     private val viewModel: MapsViewModel by inject()
 
@@ -54,7 +54,7 @@ class DetailsParade : DialogFragment() {
         private const val EXTRA_TITLE = "title"
         private const val EXTRA_TYPE = "type"
 
-        fun newInstance(idParadeOrVehicle: String, type: String) = DetailsParade().apply {
+        fun newInstance(idParadeOrVehicle: String, type: String) = DetailsDialog().apply {
             arguments = Bundle().apply {
                 putString(EXTRA_TITLE, idParadeOrVehicle)
                 putString(EXTRA_TYPE, type)
