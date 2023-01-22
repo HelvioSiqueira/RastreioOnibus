@@ -33,22 +33,32 @@ class AppMapFragment : SupportMapFragment() {
     private lateinit var txtMessage: TextView
     private lateinit var progressBar: ProgressBar
 
+    private var haveInternet = false
+    private var hasFilled = false
+
     override fun getMapAsync(callback: OnMapReadyCallback) {
 
         cardLoading = requireActivity().cardLoading
         txtMessage = requireActivity().txtMessage
         progressBar = requireActivity().progressBar
 
-        networkCallback()
-
         super.getMapAsync {
             googleMap = it
-            initMap(googleMap)
+            networkCallback()
+
+            if(!haveInternet){
+                showMessageProblem(
+                    resources.getString(R.string.txt_no_conection),
+                    View.GONE,
+                    View.VISIBLE
+                )
+            }
+
             callback.onMapReady(googleMap!!)
         }
     }
 
-    private fun init(){
+    private fun init() {
         viewModel.authenticate(requireContext())
 
         viewModel.isAuthenticate.observe(viewLifecycleOwner) {
@@ -82,15 +92,19 @@ class AppMapFragment : SupportMapFragment() {
         }
 
         viewModel.error.observe(this) {
-            showMessage(resources.getString(R.string.txt_not_successful_response))
+            showMessageProblem(
+                resources.getString(R.string.txt_not_successful_response),
+                View.GONE,
+                View.VISIBLE
+            )
         }
 
         viewModel.endLoading.observe(this) {
-            if (it) {
-                cardLoading.visibility = View.GONE
+            if (it && haveInternet) {
+                showMessageLoading(View.GONE)
                 fillMap(map)
             } else {
-                cardLoading.visibility = View.VISIBLE
+                showMessageLoading(View.VISIBLE)
             }
         }
     }
@@ -127,29 +141,57 @@ class AppMapFragment : SupportMapFragment() {
         }
     }
 
-    fun showMessage(message: String){
-        txtMessage.text = message
-        progressBar.visibility = View.GONE
-        cardLoading.visibility = View.VISIBLE
+    private fun showMessageLoading(progressBarVisibility: Int){
+        cardLoading.visibility = progressBarVisibility
+        progressBar.visibility = View.VISIBLE
+        txtMessage.visibility = View.VISIBLE
+        txtMessage.text = resources.getString(R.string.txt_loading_message)
     }
 
-    private fun networkCallback(){
+    fun showMessageProblem(
+        message: String = "",
+        progressBarVisibility: Int,
+        cardLoadingVisibility: Int
+    ) {
+        txtMessage.text = message
+        progressBar.visibility = progressBarVisibility
+        cardLoading.visibility = cardLoadingVisibility
+    }
 
-        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private fun networkCallback() {
 
-        connectivityManager.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback(){
+        val connectivityManager =
+            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        connectivityManager.registerDefaultNetworkCallback(object :
+            ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
 
+                haveInternet = true
+
                 lifecycleScope.launch {
-                    init()
+                    if (!hasFilled) {
+                        init()
+                        initMap(googleMap)
+                        hasFilled = true
+                    }
+
+                    showMessageProblem(
+                        progressBarVisibility = View.GONE,
+                        cardLoadingVisibility = View.GONE
+                    )
                 }
             }
 
             override fun onLost(network: Network) {
                 super.onLost(network)
                 lifecycleScope.launch {
-                    showMessage(resources.getString(R.string.txt_no_conection))
+                    showMessageProblem(
+                        resources.getString(R.string.txt_no_conection),
+                        View.GONE,
+                        View.VISIBLE
+                    )
                 }
             }
         })
