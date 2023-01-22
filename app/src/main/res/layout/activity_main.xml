@@ -32,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@id/search_bar" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardLoading"
+        android:id="@+id/cardMessage"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:backgroundTint="@color/gray"

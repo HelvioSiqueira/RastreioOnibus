@@ -3,14 +3,12 @@ package com.example.rastreioonibus.presentation.map
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
-import android.view.View
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.cardview.widget.CardView
+import android.os.Build
 import androidx.lifecycle.lifecycleScope
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.domain.model.Parades
 import com.example.rastreioonibus.domain.model.Vehicles
+import com.example.rastreioonibus.presentation.util.StatesOfCardMessage
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -18,7 +16,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -29,36 +26,31 @@ class AppMapFragment : SupportMapFragment() {
     private var listPosVehicles = listOf<Vehicles>()
     private var listParades = listOf<Parades>()
 
-    private lateinit var cardLoading: CardView
-    private lateinit var txtMessage: TextView
-    private lateinit var progressBar: ProgressBar
+    private lateinit var connectivityManager: ConnectivityManager
 
-    private var haveInternet = false
     private var hasFilled = false
+
+    private lateinit var statesOfCardMessage: StatesOfCardMessage
 
     override fun getMapAsync(callback: OnMapReadyCallback) {
 
-        cardLoading = requireActivity().cardLoading
-        txtMessage = requireActivity().txtMessage
-        progressBar = requireActivity().progressBar
+        statesOfCardMessage = StatesOfCardMessage(requireActivity())
+
+        connectivityManager =
+            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         super.getMapAsync {
             googleMap = it
             networkCallback()
-
-            if(!haveInternet){
-                showMessageProblem(
-                    resources.getString(R.string.txt_no_conection),
-                    View.GONE,
-                    View.VISIBLE
-                )
-            }
-
             callback.onMapReady(googleMap!!)
+        }
+
+        if(!haveInternetOnInitApp()){
+            statesOfCardMessage.showMessageProblem(resources.getString(R.string.txt_no_conection))
         }
     }
 
-    private fun init() {
+    private fun initLists() {
         viewModel.authenticate(requireContext())
 
         viewModel.isAuthenticate.observe(viewLifecycleOwner) {
@@ -92,19 +84,15 @@ class AppMapFragment : SupportMapFragment() {
         }
 
         viewModel.error.observe(this) {
-            showMessageProblem(
-                resources.getString(R.string.txt_not_successful_response),
-                View.GONE,
-                View.VISIBLE
-            )
+            statesOfCardMessage.showMessageProblem(resources.getString(R.string.txt_not_successful_response))
         }
 
         viewModel.endLoading.observe(this) {
-            if (it && haveInternet) {
-                showMessageLoading(View.GONE)
+            if (it) {
+                statesOfCardMessage.occultMessageLoading()
                 fillMap(map)
             } else {
-                showMessageLoading(View.VISIBLE)
+                statesOfCardMessage.showMessageLoading()
             }
         }
     }
@@ -141,59 +129,46 @@ class AppMapFragment : SupportMapFragment() {
         }
     }
 
-    private fun showMessageLoading(progressBarVisibility: Int){
-        cardLoading.visibility = progressBarVisibility
-        progressBar.visibility = View.VISIBLE
-        txtMessage.visibility = View.VISIBLE
-        txtMessage.text = resources.getString(R.string.txt_loading_message)
-    }
-
-    fun showMessageProblem(
-        message: String = "",
-        progressBarVisibility: Int,
-        cardLoadingVisibility: Int
-    ) {
-        txtMessage.text = message
-        progressBar.visibility = progressBarVisibility
-        cardLoading.visibility = cardLoadingVisibility
-    }
-
     private fun networkCallback() {
-
-        val connectivityManager =
+        connectivityManager =
             requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         connectivityManager.registerDefaultNetworkCallback(object :
             ConnectivityManager.NetworkCallback() {
+
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
 
-                haveInternet = true
-
                 lifecycleScope.launch {
                     if (!hasFilled) {
-                        init()
+                        initLists()
                         initMap(googleMap)
                         hasFilled = true
                     }
 
-                    showMessageProblem(
-                        progressBarVisibility = View.GONE,
-                        cardLoadingVisibility = View.GONE
-                    )
+                    statesOfCardMessage.occultMessageProblem()
                 }
             }
 
             override fun onLost(network: Network) {
                 super.onLost(network)
                 lifecycleScope.launch {
-                    showMessageProblem(
-                        resources.getString(R.string.txt_no_conection),
-                        View.GONE,
-                        View.VISIBLE
-                    )
+                    statesOfCardMessage.showMessageProblem(resources.getString(R.string.txt_no_conection))
                 }
             }
         })
     }
+
+    private fun haveInternetOnInitApp(): Boolean{
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            connectivityManager.run {
+                this.activeNetwork != null && this.getNetworkCapabilities(this.activeNetwork) != null
+            }
+        } else {
+            connectivityManager.run {
+                this.activeNetwork != null && this.isDefaultNetworkActive
+            }
+        }
+    }
+
 }
