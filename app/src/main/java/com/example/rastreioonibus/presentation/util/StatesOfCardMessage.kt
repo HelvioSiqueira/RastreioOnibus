@@ -24,9 +24,7 @@ class StatesOfCardMessage(private val activity: Activity) {
         cardMessage.visibility = View.GONE
     }
 
-    fun showMessageProblem(
-        message: String = ""
-    ) {
+    fun showMessageProblem(message: String = "") {
         progressBar.visibility = View.VISIBLE
         cardMessage.visibility = View.VISIBLE
         txtMessage.text = message
