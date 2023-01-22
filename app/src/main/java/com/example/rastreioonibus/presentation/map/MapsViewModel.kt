@@ -1,17 +1,18 @@
 package com.example.rastreioonibus.presentation.map
 
-import android.app.Application
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.*
-import com.example.rastreioonibus.data.repository.HttpRepository
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.rastreioonibus.domain.model.Parades
-import com.example.rastreioonibus.domain.model.PosLines
 import com.example.rastreioonibus.domain.model.Vehicles
+import com.example.rastreioonibus.domain.usecase.RastreioOnibusManagerUseCase
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
-class MapsViewModel(private val repo: HttpRepository, app: Application) : AndroidViewModel(app) {
+class MapsViewModel(
+    private val manager: RastreioOnibusManagerUseCase
+) : ViewModel() {
 
     val error = MutableLiveData<String>()
 
@@ -33,53 +34,21 @@ class MapsViewModel(private val repo: HttpRepository, app: Application) : Androi
         }
     }
 
-    init {
-        authenticate(app.applicationContext)
-    }
-
-    fun authenticate(context: Context) {
+    fun authenticate(context: Context){
         viewModelScope.launch {
-            try {
-                val certificate = repo.authenticator(context).headers()["Set-Cookie"]
-
-                if (certificate != null) {
-                    repo.setCertificate(certificate)
-                    isAuthenticate.postValue(true)
-
-                } else {
-                    Log.d("HSV", "Cookie nulo")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            isAuthenticate.value = manager.authenticate(context)
         }
     }
 
     fun getPosVehicles() {
         viewModelScope.launch {
-            val response = repo.getPosVehicles()
-
-            if (response.isSuccessful) {
-                listPosVehicles.value =
-                    response.body()?.lines?.flatMap(PosLines::listOfVehicles) ?: emptyList()
-
-            } else {
-                haveError(response.message())
-            }
+            listPosVehicles.value = manager.getPosVehicles(::haveError)
         }
     }
 
     fun getParades(term: String) {
         viewModelScope.launch {
-            val response = repo.getParades(term)
-
-            if (response.isSuccessful) {
-                listParades.value =
-                    response.body() ?: emptyList()
-
-            } else {
-                haveError(response.message())
-            }
+            listParades.value = manager.getParades(::haveError, term)
         }
     }
 
