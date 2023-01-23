@@ -4,13 +4,13 @@ import com.example.rastreioonibus.data.repository.HttpRepository
 import com.example.rastreioonibus.domain.model.PrevLine
 import com.example.rastreioonibus.domain.model.PrevVehicle
 
-class GetPrevArrival(
+class GetPrevArrivalUseCase(
     private val repo: HttpRepository
 ) {
 
     suspend operator fun invoke(
-        id: Int,
-        hasError: (String) -> Unit
+        hasError: (String) -> Unit,
+        id: Int
     ): List<PrevVehicle>? {
 
         val response = repo.getPrevArrival(id)

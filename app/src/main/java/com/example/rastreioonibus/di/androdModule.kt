@@ -3,10 +3,7 @@ package com.example.rastreioonibus.di
 import com.example.rastreioonibus.data.http.OlhoVivoApi
 import com.example.rastreioonibus.data.repository.HttpRepository
 import com.example.rastreioonibus.data.util.API
-import com.example.rastreioonibus.domain.usecase.AuthenticationUseCase
-import com.example.rastreioonibus.domain.usecase.GetParadesUseCase
-import com.example.rastreioonibus.domain.usecase.GetPosVehiclesUseCase
-import com.example.rastreioonibus.domain.usecase.RastreioOnibusManagerUseCase
+import com.example.rastreioonibus.domain.usecase.*
 import com.example.rastreioonibus.presentation.map.MapsViewModel
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -39,10 +36,15 @@ val androidModule = module {
     }
 
     single {
+        GetPrevArrivalUseCase(repo = get())
+    }
+
+    single {
         RastreioOnibusManagerUseCase(
             authenticate = get(),
             getPosVehicles = get(),
-            getParades = get()
+            getParades = get(),
+            getPrevArrival = get()
         )
     }
 

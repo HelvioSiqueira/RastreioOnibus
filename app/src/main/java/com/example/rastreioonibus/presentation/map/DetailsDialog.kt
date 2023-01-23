@@ -46,6 +46,10 @@ class DetailsDialog : DialogFragment() {
             }
         }
 
+        viewModel.getPrevArrival(560009167).observe(viewLifecycleOwner){
+            it
+        }
+
         return binding.root
     }
 

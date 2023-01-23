@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rastreioonibus.domain.model.Parades
+import com.example.rastreioonibus.domain.model.PrevVehicle
 import com.example.rastreioonibus.domain.model.Vehicles
 import com.example.rastreioonibus.domain.usecase.RastreioOnibusManagerUseCase
 import kotlinx.coroutines.launch
@@ -18,6 +19,7 @@ class MapsViewModel(
 
     val listPosVehicles = MutableLiveData<List<Vehicles>>()
     val listParades = MutableLiveData<List<Parades>>()
+
 
     val isAuthenticate = MutableLiveData<Boolean>().apply {
         value = false
@@ -50,6 +52,16 @@ class MapsViewModel(
         viewModelScope.launch {
             listParades.value = manager.getParades(::haveError, term)
         }
+    }
+
+    fun getPrevArrival(id: Int): MutableLiveData<List<PrevVehicle>> {
+        val listOfArrivalVehicles = MutableLiveData<List<PrevVehicle>>()
+
+        viewModelScope.launch {
+            listOfArrivalVehicles.value = manager.getPrevArrival(::haveError, id)
+        }
+
+        return listOfArrivalVehicles
     }
 
     fun getSelectedParade(id: String) = listParades.value?.find { it.codeOfParade == id.toInt() }
