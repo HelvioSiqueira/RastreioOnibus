@@ -46,7 +46,9 @@ class DetailsDialog : DialogFragment() {
             }
         }
 
-        viewModel.getPrevArrival(560009167).observe(viewLifecycleOwner){
+        viewModel.getArrivalVehicles(560009167)
+
+        viewModel.listOfArrivalLines.observe(viewLifecycleOwner){
             it
         }
 

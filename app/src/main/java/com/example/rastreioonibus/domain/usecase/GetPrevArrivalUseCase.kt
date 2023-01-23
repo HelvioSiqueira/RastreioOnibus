@@ -1,6 +1,7 @@
 package com.example.rastreioonibus.domain.usecase
 
 import com.example.rastreioonibus.data.repository.HttpRepository
+import com.example.rastreioonibus.domain.model.PrevArrival
 import com.example.rastreioonibus.domain.model.PrevLine
 import com.example.rastreioonibus.domain.model.PrevVehicle
 
@@ -11,19 +12,17 @@ class GetPrevArrivalUseCase(
     suspend operator fun invoke(
         hasError: (String) -> Unit,
         id: Int
-    ): List<PrevVehicle>? {
+    ): PrevArrival? {
 
         val response = repo.getPrevArrival(id)
 
-        var listOfVehicles: List<PrevVehicle>? = listOf()
+        var listOfVehicles = listOf<PrevArrival>()
 
-        if (response.isSuccessful) {
-            listOfVehicles =
-                response.body()?.pointOfParade?.lines?.flatMap(PrevLine::vehicles)
+        return if (response.isSuccessful) {
+            response.body()
         } else {
             hasError(response.message())
+            null
         }
-
-        return listOfVehicles
     }
 }

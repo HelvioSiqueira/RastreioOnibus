@@ -5,9 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rastreioonibus.domain.model.Parades
-import com.example.rastreioonibus.domain.model.PrevVehicle
-import com.example.rastreioonibus.domain.model.Vehicles
+import com.example.rastreioonibus.domain.model.*
 import com.example.rastreioonibus.domain.usecase.RastreioOnibusManagerUseCase
 import kotlinx.coroutines.launch
 
@@ -19,7 +17,7 @@ class MapsViewModel(
 
     val listPosVehicles = MutableLiveData<List<Vehicles>>()
     val listParades = MutableLiveData<List<Parades>>()
-
+    val listOfArrivalLines = MutableLiveData<List<PrevLine>>()
 
     val isAuthenticate = MutableLiveData<Boolean>().apply {
         value = false
@@ -36,7 +34,7 @@ class MapsViewModel(
         }
     }
 
-    fun authenticate(context: Context){
+    fun authenticate(context: Context) {
         viewModelScope.launch {
             isAuthenticate.value = manager.authenticate(context)
         }
@@ -54,14 +52,11 @@ class MapsViewModel(
         }
     }
 
-    fun getPrevArrival(id: Int): MutableLiveData<List<PrevVehicle>> {
-        val listOfArrivalVehicles = MutableLiveData<List<PrevVehicle>>()
-
+    fun getArrivalVehicles(id: Int) {
         viewModelScope.launch {
-            listOfArrivalVehicles.value = manager.getPrevArrival(::haveError, id)
+            listOfArrivalLines.value =
+                manager.getPrevArrival(::haveError, id)?.pointOfParade?.lines
         }
-
-        return listOfArrivalVehicles
     }
 
     fun getSelectedParade(id: String) = listParades.value?.find { it.codeOfParade == id.toInt() }
