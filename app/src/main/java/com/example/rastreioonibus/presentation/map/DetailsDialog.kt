@@ -6,7 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.rastreioonibus.databinding.LayoutDetailsBinding
+import com.example.rastreioonibus.presentation.adapter.LinesListAdapter
 import org.koin.android.ext.android.inject
 
 class DetailsDialog : DialogFragment() {
@@ -16,12 +19,17 @@ class DetailsDialog : DialogFragment() {
     private lateinit var npParade: TextView
     private lateinit var edParade: TextView
 
+    private lateinit var binding: LayoutDetailsBinding
+
+    private lateinit var adapter: LinesListAdapter
+    private lateinit var recyclerView: RecyclerView
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = LayoutDetailsBinding.inflate(layoutInflater)
+        binding = LayoutDetailsBinding.inflate(layoutInflater)
 
         val typeSelected = arguments?.getString(EXTRA_TYPE)
         val idParadeOrVehicle = arguments?.getString(EXTRA_TITLE)
@@ -48,11 +56,21 @@ class DetailsDialog : DialogFragment() {
 
         viewModel.getArrivalVehicles(560009167)
 
+        initLinesListAdapter()
+
         viewModel.listOfArrivalLines.observe(viewLifecycleOwner){
-            it
+            adapter.submitList(it)
         }
 
         return binding.root
+    }
+
+    private fun initLinesListAdapter(){
+        adapter = LinesListAdapter(requireContext())
+        recyclerView = binding.rvListLines
+        recyclerView.adapter = adapter
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
     companion object {
