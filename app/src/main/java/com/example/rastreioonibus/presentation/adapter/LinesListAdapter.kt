@@ -42,8 +42,8 @@ class LinesListAdapter(
 
         fun bind(line: PrevLine) = binding.apply {
             txtSign.text = line.signOfLine
-            txtOrigin.text = line.singOfOriginOfLine
             txtDestiny.text = line.signOfDestinyOfLine
+            txtOrigin.text = line.singOfOriginOfLine
 
             initRvVehicles(rvListVehicles)
 

@@ -6,13 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rastreioonibus.databinding.LayoutDetailsBinding
 import com.example.rastreioonibus.presentation.adapter.LinesListAdapter
+import kotlinx.coroutines.android.awaitFrame
 import org.koin.android.ext.android.inject
 
-class DetailsDialog : DialogFragment() {
+class DetailsDialog : Fragment() {
 
     private val viewModel: MapsViewModel by inject()
 
@@ -43,7 +45,9 @@ class DetailsDialog : DialogFragment() {
                 val parade = viewModel.getSelectedParade(idParadeOrVehicle!!)
 
                 npParade.text = parade?.nameOfParade
-                edParade.text = parade?.addressOfParade
+                edParade.text = parade?.codeOfParade.toString()
+
+                viewModel.getArrivalVehicles(parade?.codeOfParade!!)
             }
 
             "veiculo" ->{
@@ -53,8 +57,6 @@ class DetailsDialog : DialogFragment() {
                 edParade.visibility = View.GONE
             }
         }
-
-        viewModel.getArrivalVehicles(560009167)
 
         initLinesListAdapter()
 

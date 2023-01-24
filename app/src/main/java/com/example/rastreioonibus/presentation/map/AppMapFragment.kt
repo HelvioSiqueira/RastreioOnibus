@@ -4,8 +4,11 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
+import android.view.View
+import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.lifecycleScope
 import com.example.rastreioonibus.R
+import com.example.rastreioonibus.databinding.ActivityMainBinding
 import com.example.rastreioonibus.domain.model.Parades
 import com.example.rastreioonibus.domain.model.Vehicles
 import com.example.rastreioonibus.presentation.util.StatesOfCardMessage
@@ -16,6 +19,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -98,6 +102,12 @@ class AppMapFragment : SupportMapFragment() {
     }
 
     private fun fillMap(googleMap: GoogleMap?) {
+        val layoutDetails = requireActivity().details
+
+        googleMap?.setOnCameraMoveListener {
+            layoutDetails.visibility = View.GONE
+        }
+
         googleMap?.run {
 
             listParades.forEach { parade ->
@@ -121,8 +131,15 @@ class AppMapFragment : SupportMapFragment() {
             }
 
             googleMap.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener {
-                DetailsDialog.newInstance(it.title ?: "", it.snippet!!)
-                    .show(childFragmentManager, DetailsDialog.DIALOG_TAG)
+                val fragment = DetailsDialog.newInstance(it.title ?: "", it.snippet!!)
+
+                layoutDetails.visibility = View.VISIBLE
+
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .setTransition(TRANSIT_FRAGMENT_OPEN)
+                    .replace(R.id.details, fragment, DetailsDialog.DIALOG_TAG)
+                    .commit()
 
                 true
             })
