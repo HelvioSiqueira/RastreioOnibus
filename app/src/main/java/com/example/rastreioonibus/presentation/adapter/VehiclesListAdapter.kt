@@ -13,7 +13,9 @@ import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ItemVehicleBinding
 import com.example.rastreioonibus.domain.model.PrevVehicle
 
-class VehiclesListAdapter() :
+class VehiclesListAdapter(
+    private val context: Context
+) :
     ListAdapter<PrevVehicle, VehiclesListAdapter.LinesViewHolder>(VehiclesListAdapter) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -37,10 +39,13 @@ class VehiclesListAdapter() :
 
         fun bind(vehicle: PrevVehicle) =
             binding.apply {
-                txtPrefixVehicle.text = vehicle.prefixOfVehicle
-                txtExpectedTime.text = vehicle.expectedArrivalTime
+                txtPrefixVehicle.text =
+                    context.resources.getString(R.string.txt_sign_bus, vehicle.prefixOfVehicle)
+                txtExpectedTime.text = context.resources.getString(
+                    R.string.txt_arrival_forecast,
+                    vehicle.expectedArrivalTime
+                )
             }
-
     }
 
     private companion object : DiffUtil.ItemCallback<PrevVehicle>() {

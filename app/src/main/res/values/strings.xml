@@ -5,4 +5,7 @@
     <string name="txt_not_successful_response">Erro a buscar dados</string>
 
     <string name="txt_no_conection">Sem conexão com a internet</string>
+
+    <string name="txt_sign_bus">Prefixo do veiculo: %s</string>
+    <string name="txt_arrival_forecast">Horário previsto de chegada: %s</string>
 </resources>

@@ -4,11 +4,10 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
-import android.view.View
+import android.widget.LinearLayout
 import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.lifecycleScope
 import com.example.rastreioonibus.R
-import com.example.rastreioonibus.databinding.ActivityMainBinding
 import com.example.rastreioonibus.domain.model.Parades
 import com.example.rastreioonibus.domain.model.Vehicles
 import com.example.rastreioonibus.presentation.util.StatesOfCardMessage
@@ -19,7 +18,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.android.synthetic.main.activity_main.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.layout_bottom_sheet.*
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -29,12 +29,12 @@ class AppMapFragment : SupportMapFragment() {
 
     private var listPosVehicles = listOf<Vehicles>()
     private var listParades = listOf<Parades>()
-
-    private lateinit var connectivityManager: ConnectivityManager
-
     private var hasFilled = false
 
+    private lateinit var connectivityManager: ConnectivityManager
     private lateinit var statesOfCardMessage: StatesOfCardMessage
+
+    private lateinit var behavior: BottomSheetBehavior<LinearLayout>
 
     override fun getMapAsync(callback: OnMapReadyCallback) {
 
@@ -42,6 +42,11 @@ class AppMapFragment : SupportMapFragment() {
 
         connectivityManager =
             requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        behavior =
+            BottomSheetBehavior.from(requireActivity().layoutBottomSheet)
+
+        behavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         super.getMapAsync {
             googleMap = it
@@ -102,10 +107,10 @@ class AppMapFragment : SupportMapFragment() {
     }
 
     private fun fillMap(googleMap: GoogleMap?) {
-        val layoutDetails = requireActivity().details
-
         googleMap?.setOnCameraMoveListener {
-            layoutDetails.visibility = View.GONE
+            if(behavior.state == BottomSheetBehavior.STATE_EXPANDED){
+                behavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
         }
 
         googleMap?.run {
@@ -133,7 +138,7 @@ class AppMapFragment : SupportMapFragment() {
             googleMap.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener {
                 val fragment = DetailsDialog.newInstance(it.title ?: "", it.snippet!!)
 
-                layoutDetails.visibility = View.VISIBLE
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
                 requireActivity().supportFragmentManager
                     .beginTransaction()

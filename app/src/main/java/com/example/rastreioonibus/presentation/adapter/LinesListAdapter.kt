@@ -4,10 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ItemLineBinding
 import com.example.rastreioonibus.domain.model.PrevLine
@@ -42,8 +39,8 @@ class LinesListAdapter(
 
         fun bind(line: PrevLine) = binding.apply {
             txtSign.text = line.signOfLine
-            txtDestiny.text = line.signOfDestinyOfLine
             txtOrigin.text = line.singOfOriginOfLine
+            txtDestiny.text = line.signOfDestinyOfLine
 
             initRvVehicles(rvListVehicles)
 
@@ -51,9 +48,11 @@ class LinesListAdapter(
         }
 
         private fun initRvVehicles(rvListVehicles: RecyclerView) {
-            adapter = VehiclesListAdapter()
+            adapter = VehiclesListAdapter(context)
             recyclerView = rvListVehicles
             recyclerView.adapter = adapter
+
+            recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
 
             recyclerView.layoutManager = LinearLayoutManager(context)
         }
