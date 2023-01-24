@@ -12,8 +12,7 @@ import com.example.rastreioonibus.domain.model.PrevVehicle
 
 class LinesListAdapter(
     private val context: Context
-) :
-    ListAdapter<PrevLine, LinesListAdapter.LinesViewHolder>(LinesListAdapter) {
+) : ListAdapter<PrevLine, LinesListAdapter.LinesViewHolder>(LinesListAdapter) {
 
     private var listOfVehicles = listOf<PrevVehicle>()
 
@@ -52,7 +51,12 @@ class LinesListAdapter(
             recyclerView = rvListVehicles
             recyclerView.adapter = adapter
 
-            recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, DividerItemDecoration.VERTICAL))
+            recyclerView.addItemDecoration(
+                DividerItemDecoration(
+                    recyclerView.context,
+                    DividerItemDecoration.VERTICAL
+                )
+            )
 
             recyclerView.layoutManager = LinearLayoutManager(context)
         }

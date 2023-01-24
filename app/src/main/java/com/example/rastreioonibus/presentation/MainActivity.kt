@@ -23,20 +23,8 @@ class MainActivity :
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
 
-        fragmentMap.getMapAsync {
-
-        }
-    }
-
-    private fun onItemClicked(menuItem: MenuItem){
-        when (menuItem.itemId) {
-            R.id.btnSearchLinhas -> {
-                Toast.makeText(this, "Pesquisa Linhas", Toast.LENGTH_SHORT).show()
-            }
-            else -> {}
-        }
+        fragmentMap.getMapAsync {}
     }
 }

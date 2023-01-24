@@ -32,42 +32,27 @@ class DetailsDialog : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = LayoutDetailsBinding.inflate(layoutInflater)
-
-        val typeSelected = arguments?.getString(EXTRA_TYPE)
-        val idParadeOrVehicle = arguments?.getString(EXTRA_TITLE)
-
         npParade = binding.npParada
         edParade = binding.edParada
 
-        when(typeSelected){
+        val idParadeOrVehicle = arguments?.getString(EXTRA_TITLE)
+        val parade = viewModel.getSelectedParade(idParadeOrVehicle ?: "706334")
 
-            "parada" ->{
-                val parade = viewModel.getSelectedParade(idParadeOrVehicle!!)
+        npParade.text = parade?.nameOfParade
+        edParade.text = parade?.addressOfParade
 
-                npParade.text = parade?.nameOfParade
-                edParade.text = parade?.codeOfParade.toString()
-
-                viewModel.getArrivalVehicles(parade?.codeOfParade!!)
-            }
-
-            "veiculo" ->{
-                val vehicle = viewModel.getSelectedVehicle(idParadeOrVehicle!!)
-
-                npParade.text = vehicle?.prefixOfVehicle
-                edParade.visibility = View.GONE
-            }
-        }
+        viewModel.getArrivalVehicles(parade?.codeOfParade ?: 0)
 
         initLinesListAdapter()
 
-        viewModel.listOfArrivalLines.observe(viewLifecycleOwner){
+        viewModel.listOfArrivalLines.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
 
         return binding.root
     }
 
-    private fun initLinesListAdapter(){
+    private fun initLinesListAdapter() {
         adapter = LinesListAdapter(requireContext())
         recyclerView = binding.rvListLines
         recyclerView.adapter = adapter
@@ -78,12 +63,10 @@ class DetailsDialog : Fragment() {
     companion object {
         const val DIALOG_TAG = "detailsDialog"
         private const val EXTRA_TITLE = "title"
-        private const val EXTRA_TYPE = "type"
 
-        fun newInstance(idParadeOrVehicle: String, type: String) = DetailsDialog().apply {
+        fun newInstance(idParadeOrVehicle: String) = DetailsDialog().apply {
             arguments = Bundle().apply {
                 putString(EXTRA_TITLE, idParadeOrVehicle)
-                putString(EXTRA_TYPE, type)
             }
         }
     }

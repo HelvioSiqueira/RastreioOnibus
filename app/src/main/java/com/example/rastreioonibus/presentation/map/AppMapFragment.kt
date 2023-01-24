@@ -25,7 +25,7 @@ import org.koin.android.ext.android.inject
 
 class AppMapFragment : SupportMapFragment() {
     private val viewModel: MapsViewModel by inject()
-    private var googleMap: GoogleMap? = null
+    private lateinit var googleMap: GoogleMap
 
     private var listPosVehicles = listOf<Vehicles>()
     private var listParades = listOf<Parades>()
@@ -51,10 +51,10 @@ class AppMapFragment : SupportMapFragment() {
         super.getMapAsync {
             googleMap = it
             networkCallback()
-            callback.onMapReady(googleMap!!)
+            callback.onMapReady(googleMap)
         }
 
-        if(!haveInternetOnInitApp()){
+        if (!haveInternetOnInitApp()) {
             statesOfCardMessage.showMessageProblem(resources.getString(R.string.txt_no_conection))
         }
     }
@@ -78,14 +78,14 @@ class AppMapFragment : SupportMapFragment() {
         }
     }
 
-    private fun initMap(map: GoogleMap?) {
+    private fun initMap(map: GoogleMap) {
         val origin = LatLng(-23.561706, -46.655981)
 
-        googleMap = map?.apply {
+        googleMap = map.apply {
             mapType = GoogleMap.MAP_TYPE_NORMAL
         }
 
-        googleMap?.run {
+        googleMap.run {
             animateCamera(CameraUpdateFactory.newLatLngZoom(origin, 15F))
             uiSettings.isZoomControlsEnabled = true
             uiSettings.isMyLocationButtonEnabled = true
@@ -93,7 +93,10 @@ class AppMapFragment : SupportMapFragment() {
         }
 
         viewModel.error.observe(this) {
-            statesOfCardMessage.showMessageProblem(resources.getString(R.string.txt_not_successful_response))
+            statesOfCardMessage
+                .showMessageProblem(
+                    resources.getString(R.string.txt_not_successful_response)
+                )
         }
 
         viewModel.endLoading.observe(this) {
@@ -106,14 +109,14 @@ class AppMapFragment : SupportMapFragment() {
         }
     }
 
-    private fun fillMap(googleMap: GoogleMap?) {
-        googleMap?.setOnCameraMoveListener {
-            if(behavior.state == BottomSheetBehavior.STATE_EXPANDED){
+    private fun fillMap(googleMap: GoogleMap) {
+        googleMap.setOnCameraMoveListener {
+            if (behavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                 behavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
         }
 
-        googleMap?.run {
+        googleMap.run {
 
             listParades.forEach { parade ->
                 addMarker(
@@ -135,19 +138,23 @@ class AppMapFragment : SupportMapFragment() {
                 )
             }
 
-            googleMap.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener {
-                val fragment = DetailsDialog.newInstance(it.title ?: "", it.snippet!!)
+            googleMap.setOnMarkerClickListener {
 
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                if (it.snippet == "veiculo") {
+                    it.showInfoWindow()
+                } else {
+                    val fragment = DetailsDialog.newInstance(it.title ?: "")
 
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .setTransition(TRANSIT_FRAGMENT_OPEN)
-                    .replace(R.id.details, fragment, DetailsDialog.DIALOG_TAG)
-                    .commit()
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+                    requireActivity().supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.details, fragment, DetailsDialog.DIALOG_TAG)
+                        .commit()
+                }
 
                 true
-            })
+            }
         }
     }
 
@@ -175,13 +182,14 @@ class AppMapFragment : SupportMapFragment() {
             override fun onLost(network: Network) {
                 super.onLost(network)
                 lifecycleScope.launch {
-                    statesOfCardMessage.showMessageProblem(resources.getString(R.string.txt_no_conection))
+                    statesOfCardMessage
+                        .showMessageProblem(resources.getString(R.string.txt_no_conection))
                 }
             }
         })
     }
 
-    private fun haveInternetOnInitApp(): Boolean{
+    private fun haveInternetOnInitApp(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             connectivityManager.run {
                 this.activeNetwork != null && this.getNetworkCapabilities(this.activeNetwork) != null

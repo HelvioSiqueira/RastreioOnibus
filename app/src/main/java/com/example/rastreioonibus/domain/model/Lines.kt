@@ -1,7 +1,6 @@
 package com.example.rastreioonibus.domain.model
 
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
 data class Lines(
 
@@ -32,4 +31,4 @@ data class Lines(
     //Informa o letreiro descritivo da linha no sentido Terminal Secundário para Terminal Principal
     @SerializedName("ts")
     val signOfLineDirectionSecondary: String = ""
-): Serializable
+)

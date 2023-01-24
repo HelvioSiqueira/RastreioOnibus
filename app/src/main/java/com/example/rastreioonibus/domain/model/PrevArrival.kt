@@ -8,6 +8,6 @@ data class PrevArrival(
     val hourReference: String = "",
 
     @SerializedName("p")
-    val pointOfParade: PrevParade? = null
+    val pointOfParade: PrevParade
 )
 
