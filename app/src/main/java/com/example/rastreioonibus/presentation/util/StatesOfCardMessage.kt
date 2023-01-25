@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ActivityMainBinding
-import kotlinx.android.synthetic.main.activity_main.*
 
 class StatesOfCardMessage(
     private val context: Context,

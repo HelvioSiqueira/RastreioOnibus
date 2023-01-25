@@ -3,8 +3,6 @@ package com.example.rastreioonibus.presentation
 import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -24,7 +22,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -38,30 +35,24 @@ class MainActivity :
     private var listParades = listOf<Parades>()
     private var hasFilled = false
 
-    private lateinit var connectivityManager: ConnectivityManager
-    private lateinit var connectivityState: ConnectivityState
-
     private lateinit var statesOfCardMessage: StatesOfCardMessage
 
     private lateinit var behaviorDetailsParades: BottomSheetBehavior<LinearLayout>
     private lateinit var behaviorFilter: BottomSheetBehavior<ConstraintLayout>
 
-    private lateinit var fragmentMap: SupportMapFragment
-    private lateinit var binding: ActivityMainBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+
+        val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        fragmentMap = supportFragmentManager
+        val fragmentMap = supportFragmentManager
             .findFragmentById(R.id.fragmentMap) as SupportMapFragment
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityState = ConnectivityState(connectivityManager)
 
         statesOfCardMessage = StatesOfCardMessage(this, binding)
-
-        connectivityManager =
-            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityState = ConnectivityState(connectivityManager)
 
         behaviorDetailsParades =
             BottomSheetBehavior.from(binding.bottomSheetDetailsParades)
@@ -121,8 +112,7 @@ class MainActivity :
         }
 
         viewModel.error.observe(this) {
-            statesOfCardMessage
-                .showMessageProblem(
+            statesOfCardMessage.showMessageProblem(
                     resources.getString(R.string.txt_not_successful_response)
                 )
         }
