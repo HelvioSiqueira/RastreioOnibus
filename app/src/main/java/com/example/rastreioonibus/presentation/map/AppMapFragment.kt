@@ -2,14 +2,12 @@ package com.example.rastreioonibus.presentation.map
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.Network
-import android.os.Build
 import android.widget.LinearLayout
-import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.lifecycle.lifecycleScope
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.domain.model.Parades
 import com.example.rastreioonibus.domain.model.Vehicles
+import com.example.rastreioonibus.presentation.util.ConnectivityState
 import com.example.rastreioonibus.presentation.util.StatesOfCardMessage
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -32,6 +30,8 @@ class AppMapFragment : SupportMapFragment() {
     private var hasFilled = false
 
     private lateinit var connectivityManager: ConnectivityManager
+    private lateinit var connectivityState: ConnectivityState
+
     private lateinit var statesOfCardMessage: StatesOfCardMessage
 
     private lateinit var behavior: BottomSheetBehavior<LinearLayout>
@@ -42,6 +42,7 @@ class AppMapFragment : SupportMapFragment() {
 
         connectivityManager =
             requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityState = ConnectivityState(connectivityManager)
 
         behavior =
             BottomSheetBehavior.from(requireActivity().layoutBottomSheet)
@@ -50,11 +51,14 @@ class AppMapFragment : SupportMapFragment() {
 
         super.getMapAsync {
             googleMap = it
-            networkCallback()
+            connectivityState.networkCallback(
+                ::callbackOnAvailable,
+                ::callbackOnLost
+            )
             callback.onMapReady(googleMap)
         }
 
-        if (!haveInternetOnInitApp()) {
+        if (!connectivityState.haveInternetOnInitApp()) {
             statesOfCardMessage.showMessageProblem(resources.getString(R.string.txt_no_conection))
         }
     }
@@ -158,47 +162,22 @@ class AppMapFragment : SupportMapFragment() {
         }
     }
 
-    private fun networkCallback() {
-        connectivityManager =
-            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-        connectivityManager.registerDefaultNetworkCallback(object :
-            ConnectivityManager.NetworkCallback() {
-
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
-
-                lifecycleScope.launch {
-                    if (!hasFilled) {
-                        initLists()
-                        initMap(googleMap)
-                        hasFilled = true
-                    }
-
-                    statesOfCardMessage.occultMessageProblem()
-                }
+    private fun callbackOnAvailable(){
+        lifecycleScope.launch {
+            if (!hasFilled) {
+                initLists()
+                initMap(googleMap)
+                hasFilled = true
             }
 
-            override fun onLost(network: Network) {
-                super.onLost(network)
-                lifecycleScope.launch {
-                    statesOfCardMessage
-                        .showMessageProblem(resources.getString(R.string.txt_no_conection))
-                }
-            }
-        })
-    }
-
-    private fun haveInternetOnInitApp(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            connectivityManager.run {
-                this.activeNetwork != null && this.getNetworkCapabilities(this.activeNetwork) != null
-            }
-        } else {
-            connectivityManager.run {
-                this.activeNetwork != null && this.isDefaultNetworkActive
-            }
+            statesOfCardMessage.occultMessageProblem()
         }
     }
 
+    private fun callbackOnLost(){
+        lifecycleScope.launch {
+            statesOfCardMessage
+                .showMessageProblem(resources.getString(R.string.txt_no_conection))
+        }
+    }
 }
