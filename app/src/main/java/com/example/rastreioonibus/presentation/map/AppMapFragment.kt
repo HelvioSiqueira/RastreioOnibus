@@ -91,7 +91,6 @@ class AppMapFragment : SupportMapFragment() {
 
         googleMap.run {
             animateCamera(CameraUpdateFactory.newLatLngZoom(origin, 15F))
-            uiSettings.isZoomControlsEnabled = true
             uiSettings.isMyLocationButtonEnabled = true
             uiSettings.isScrollGesturesEnabled = true
         }
