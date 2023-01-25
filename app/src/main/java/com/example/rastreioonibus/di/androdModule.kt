@@ -49,11 +49,7 @@ val androidModule = module {
     }
 
     single {
-        val logging = HttpLoggingInterceptor()
-        logging.level = HttpLoggingInterceptor.Level.BODY
-
         val httpClient = OkHttpClient.Builder()
-        httpClient.addInterceptor(logging)
 
         val gson = GsonBuilder()
             .setLenient()

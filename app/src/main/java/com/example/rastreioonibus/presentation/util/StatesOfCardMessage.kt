@@ -1,26 +1,31 @@
 package com.example.rastreioonibus.presentation.util
 
 import android.app.Activity
+import android.content.Context
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import com.example.rastreioonibus.R
+import com.example.rastreioonibus.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
 
-class StatesOfCardMessage(private val activity: Activity) {
+class StatesOfCardMessage(
+    private val context: Context,
+    private val binding: ActivityMainBinding
+) {
 
-    private var cardMessage: CardView = activity.cardMessage
-    private var txtMessage: TextView = activity.txtMessage
-    private var progressBar: ProgressBar = activity.progressBar
+    private var cardMessage: CardView = binding.cardMessage
+    private var txtMessage: TextView = binding.txtMessage
+    private var progressBar: ProgressBar = binding.progressBar
 
     fun showMessageLoading() {
         cardMessage.visibility = View.VISIBLE
         progressBar.visibility = View.VISIBLE
-        txtMessage.text = activity.resources.getString(R.string.txt_loading_message)
+        txtMessage.text = context.resources.getString(R.string.txt_loading_message)
     }
 
-    fun occultMessageLoading(){
+    fun occultMessageLoading() {
         cardMessage.visibility = View.GONE
     }
 
@@ -30,7 +35,7 @@ class StatesOfCardMessage(private val activity: Activity) {
         txtMessage.text = message
     }
 
-    fun occultMessageProblem(){
+    fun occultMessageProblem() {
         cardMessage.visibility = View.GONE
     }
 }

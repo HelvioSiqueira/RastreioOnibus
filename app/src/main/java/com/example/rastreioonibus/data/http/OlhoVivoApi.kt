@@ -1,9 +1,6 @@
 package com.example.rastreioonibus.data.http
 
-import com.example.rastreioonibus.domain.model.Lines
-import com.example.rastreioonibus.domain.model.Parades
-import com.example.rastreioonibus.domain.model.PrevArrival
-import com.example.rastreioonibus.domain.model.PosVehicles
+import com.example.rastreioonibus.domain.model.*
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -14,6 +11,9 @@ interface OlhoVivoApi {
 
     @GET("Posicao")
     suspend fun getPosVehicles(@Header("Cookie") certificate: String): Response<PosVehicles>
+
+    @GET("Linha")
+    suspend fun getPosVehiclesByLine(@Header("Cookie") certificate: String, @Query("codigoLinha") line: Int): Response<PosVehiclesByLines>
 
     @GET("Linha/Buscar")
     suspend fun getLines(@Header("Cookie") certificate: String, @Query("termosBusca") line: Int): Response<List<Lines>>

@@ -19,8 +19,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.bottom_sheet_details_parades.*
-import kotlinx.android.synthetic.main.bottom_sheet_filter.*
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
