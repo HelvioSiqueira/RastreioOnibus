@@ -3,6 +3,7 @@ package com.example.rastreioonibus.presentation.map
 import android.content.Context
 import android.net.ConnectivityManager
 import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.domain.model.Parades
@@ -17,7 +18,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.layout_bottom_sheet.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bottom_sheet_details_parades.*
+import kotlinx.android.synthetic.main.bottom_sheet_filter.*
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -34,7 +37,8 @@ class AppMapFragment : SupportMapFragment() {
 
     private lateinit var statesOfCardMessage: StatesOfCardMessage
 
-    private lateinit var behavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var behaviorDetailsParades: BottomSheetBehavior<LinearLayout>
+    private lateinit var behaviorFilter: BottomSheetBehavior<ConstraintLayout>
 
     override fun getMapAsync(callback: OnMapReadyCallback) {
 
@@ -44,10 +48,12 @@ class AppMapFragment : SupportMapFragment() {
             requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         connectivityState = ConnectivityState(connectivityManager)
 
-        behavior =
-            BottomSheetBehavior.from(requireActivity().layoutBottomSheet)
+        behaviorDetailsParades =
+            BottomSheetBehavior.from(requireActivity().bottomSheetDetailsParades)
+        behaviorFilter = BottomSheetBehavior.from(requireActivity().bottomSheetFilter)
 
-        behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        behaviorDetailsParades.state = BottomSheetBehavior.STATE_HIDDEN
+        behaviorFilter.state = BottomSheetBehavior.STATE_HIDDEN
 
         super.getMapAsync {
             googleMap = it
@@ -60,6 +66,11 @@ class AppMapFragment : SupportMapFragment() {
 
         if (!connectivityState.haveInternetOnInitApp()) {
             statesOfCardMessage.showMessageProblem(resources.getString(R.string.txt_no_conection))
+        }
+
+        requireActivity().fabFilter.setOnClickListener {
+            behaviorDetailsParades.state = BottomSheetBehavior.STATE_HIDDEN
+            behaviorFilter.state = BottomSheetBehavior.STATE_EXPANDED
         }
     }
 
@@ -114,8 +125,8 @@ class AppMapFragment : SupportMapFragment() {
 
     private fun fillMap(googleMap: GoogleMap) {
         googleMap.setOnCameraMoveListener {
-            if (behavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                behavior.state = BottomSheetBehavior.STATE_HIDDEN
+            if (behaviorDetailsParades.state == BottomSheetBehavior.STATE_EXPANDED) {
+                behaviorDetailsParades.state = BottomSheetBehavior.STATE_HIDDEN
             }
         }
 
@@ -148,7 +159,7 @@ class AppMapFragment : SupportMapFragment() {
                 } else {
                     val fragment = DetailsDialog.newInstance(it.title ?: "")
 
-                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    behaviorDetailsParades.state = BottomSheetBehavior.STATE_EXPANDED
 
                     requireActivity().supportFragmentManager
                         .beginTransaction()

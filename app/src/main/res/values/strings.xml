@@ -8,4 +8,9 @@
 
     <string name="txt_sign_bus">Prefixo do veiculo: %s</string>
     <string name="txt_arrival_forecast">Horário previsto de chegada: %s</string>
+
+    <string name="txt_filter_bus">Onibus</string>
+    <string name="txt_filter_parades">Paradas</string>
+    <string name="txt_hint_filter_line">Linha</string>
+    <string name="txt_hint_filter_location">Localização</string>
 </resources>
