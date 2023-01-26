@@ -7,17 +7,17 @@ import android.util.Log
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ActivityMainBinding
 import com.example.rastreioonibus.domain.model.Parades
-import com.example.rastreioonibus.domain.model.PosVehicles
 import com.example.rastreioonibus.domain.model.Vehicles
 import com.example.rastreioonibus.presentation.map.DetailsDialog
 import com.example.rastreioonibus.presentation.map.MapsViewModel
 import com.example.rastreioonibus.presentation.util.ConnectivityState
+import com.example.rastreioonibus.presentation.util.MyBitmapCache
 import com.example.rastreioonibus.presentation.util.StatesOfCardMessage
+import com.example.rastreioonibus.presentation.util.toBitmap
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -42,6 +42,8 @@ class MainActivity :
     private lateinit var behaviorDetailsParades: BottomSheetBehavior<LinearLayout>
     private lateinit var behaviorFilter: BottomSheetBehavior<ConstraintLayout>
 
+    private lateinit var bitmapCache: MyBitmapCache
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,6 +55,8 @@ class MainActivity :
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val connectivityState = ConnectivityState(connectivityManager)
+
+        bitmapCache = MyBitmapCache(this, 1)
 
         statesOfCardMessage = StatesOfCardMessage(this, binding)
 
@@ -159,20 +163,24 @@ class MainActivity :
 
         googleMap.run {
 
-            this@MainActivity.listParades.forEach { parade ->
+            val stop = bitmapCache.getBitmap(R.drawable.stop_svg)
+
+            listParades.forEach { parade ->
                 addMarker(
                     MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_parada))
+                        .icon(BitmapDescriptorFactory.fromBitmap(stop!!))
                         .position(LatLng(parade.latitude, parade.longitude))
                         .title(parade.codeOfParade.toString())
                         .snippet("parada")
                 )
             }
 
-            this@MainActivity.listPosVehicles.forEach { vehicle ->
+            val bus = bitmapCache.getBitmap(R.drawable.bus_svg)
+
+            listPosVehicles.forEach { vehicle ->
                 addMarker(
                     MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_bus))
+                        .icon(BitmapDescriptorFactory.fromBitmap(bus!!))
                         .position(LatLng(vehicle.latitude, vehicle.longitude))
                         .title(vehicle.prefixOfVehicle)
                         .snippet("veiculo")
