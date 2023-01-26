@@ -163,6 +163,7 @@ class MainActivity :
                 } else {
                     val fragment = DetailsDialog.newInstance(it.title ?: "")
 
+                    behaviorFilter.state = BottomSheetBehavior.STATE_HIDDEN
                     behaviorDetailsParades.state = BottomSheetBehavior.STATE_EXPANDED
 
                     supportFragmentManager

@@ -10,7 +10,7 @@ import com.example.rastreioonibus.domain.model.PosVehicles
 import com.example.rastreioonibus.domain.model.PrevArrival
 import retrofit2.Response
 
-class HttpRepository(private val api: OlhoVivoApi) {
+class HttpRepository(private val api: OlhoVivoApi) : OlhoVivoApi {
 
     private var certificado: String = ""
 
@@ -30,6 +30,8 @@ class HttpRepository(private val api: OlhoVivoApi) {
         return api.getPosVehicles(certificado)
     }
 
+    
+
     suspend fun getLines(idLine: Int): Response<List<Lines>> {
         return api.getLines(certificado, idLine)
     }
@@ -42,7 +44,7 @@ class HttpRepository(private val api: OlhoVivoApi) {
         return api.getPrevArrival(certificado, idParade)
     }
 
-    fun setCertificate(cert: String){
+    fun setCertificate(cert: String) {
         certificado = cert
     }
 }
