@@ -46,9 +46,21 @@ class MapsViewModel(
         }
     }
 
+    fun getPosVehiclesByLine(idLine: Int) {
+        viewModelScope.launch {
+            listPosVehicles.value = manager.getPosVehiclesByLineUseCase(::haveError, idLine)
+        }
+    }
+
     fun getParades(term: String) {
         viewModelScope.launch {
             listParades.value = manager.getParades(::haveError, term)
+        }
+    }
+
+    fun getParadesByLine(idLine: Int) {
+        viewModelScope.launch {
+            listParades.value = manager.getParadesByLineUseCase(::haveError, idLine)
         }
     }
 

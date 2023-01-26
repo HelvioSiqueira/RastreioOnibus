@@ -32,7 +32,15 @@ val androidModule = module {
     }
 
     single {
+        GetPosVehiclesByLineUseCase(repo = get())
+    }
+
+    single {
         GetParadesUseCase(repo = get())
+    }
+
+    single {
+        GetParadesByLineUseCase(repo = get())
     }
 
     single {
@@ -43,13 +51,19 @@ val androidModule = module {
         RastreioOnibusManagerUseCase(
             authenticate = get(),
             getPosVehicles = get(),
+            getPosVehiclesByLineUseCase = get(),
             getParades = get(),
+            getParadesByLineUseCase = get(),
             getPrevArrival = get()
         )
     }
 
     single {
+        val logging = HttpLoggingInterceptor()
+
+        logging.level = HttpLoggingInterceptor.Level.BODY
         val httpClient = OkHttpClient.Builder()
+        httpClient.addInterceptor(logging)
 
         val gson = GsonBuilder()
             .setLenient()

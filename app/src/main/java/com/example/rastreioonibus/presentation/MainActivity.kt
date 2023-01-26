@@ -3,13 +3,16 @@ package com.example.rastreioonibus.presentation
 import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ActivityMainBinding
 import com.example.rastreioonibus.domain.model.Parades
+import com.example.rastreioonibus.domain.model.PosVehicles
 import com.example.rastreioonibus.domain.model.Vehicles
 import com.example.rastreioonibus.presentation.map.DetailsDialog
 import com.example.rastreioonibus.presentation.map.MapsViewModel
@@ -33,7 +36,6 @@ class MainActivity :
 
     private var listPosVehicles = listOf<Vehicles>()
     private var listParades = listOf<Parades>()
-    private var hasFilled = false
 
     private lateinit var statesOfCardMessage: StatesOfCardMessage
 
@@ -68,6 +70,12 @@ class MainActivity :
         binding.fabFilter.setOnClickListener {
             behaviorDetailsParades.state = BottomSheetBehavior.STATE_HIDDEN
             behaviorFilter.state = BottomSheetBehavior.STATE_EXPANDED
+
+            Log.d("HSV", viewModel.endLoading.value.toString())
+            viewModel.getPosVehiclesByLine(2506)
+            viewModel.getParadesByLine(2506)
+
+
         }
 
         fragmentMap.getMapAsync {
@@ -91,6 +99,17 @@ class MainActivity :
 
         viewModel.listParades.observe(this) {
             listParades = it
+
+            val first = it.first()
+
+            googleMap.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(
+                        first.latitude,
+                        first.longitude
+                    ), 15f
+                )
+            )
         }
 
         viewModel.listPosVehicles.observe(this) {
@@ -107,14 +126,15 @@ class MainActivity :
 
         googleMap.run {
             animateCamera(CameraUpdateFactory.newLatLngZoom(origin, 15F))
+            uiSettings.isZoomControlsEnabled = true
             uiSettings.isMyLocationButtonEnabled = true
             uiSettings.isScrollGesturesEnabled = true
         }
 
         viewModel.error.observe(this) {
             statesOfCardMessage.showMessageProblem(
-                    resources.getString(R.string.txt_not_successful_response)
-                )
+                resources.getString(R.string.txt_not_successful_response)
+            )
         }
 
         viewModel.endLoading.observe(this) {
@@ -125,6 +145,7 @@ class MainActivity :
                 statesOfCardMessage.showMessageLoading()
             }
         }
+
     }
 
     private fun fillMap(googleMap: GoogleMap) {
@@ -134,9 +155,11 @@ class MainActivity :
             }
         }
 
+        googleMap.clear()
+
         googleMap.run {
 
-            listParades.forEach { parade ->
+            this@MainActivity.listParades.forEach { parade ->
                 addMarker(
                     MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_parada))
@@ -146,7 +169,7 @@ class MainActivity :
                 )
             }
 
-            listPosVehicles.forEach { vehicle ->
+            this@MainActivity.listPosVehicles.forEach { vehicle ->
                 addMarker(
                     MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_bus))
@@ -179,12 +202,8 @@ class MainActivity :
 
     private fun callbackOnAvailable() {
         lifecycleScope.launch {
-            if (!hasFilled) {
-                initLists()
-                initMap(googleMap)
-                hasFilled = true
-            }
-
+            initLists()
+            initMap(googleMap)
             statesOfCardMessage.occultMessageProblem()
         }
     }

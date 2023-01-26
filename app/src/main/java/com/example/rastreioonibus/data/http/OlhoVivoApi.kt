@@ -14,10 +14,10 @@ interface OlhoVivoApi {
         @Header("Cookie") certificate: String
     ): Response<PosVehicles>
 
-    @GET("Linha")
+    @GET("Posicao/Linha")
     suspend fun getPosVehiclesByLine(
         @Header("Cookie") certificate: String,
-        @Query("codigoLinha") line: Int
+        @Query("codigoLinha") idLine: Int
     ): Response<PosVehiclesByLines>
 
     @GET("Linha/Buscar")
@@ -32,10 +32,10 @@ interface OlhoVivoApi {
         @Query("termosBusca") term: String
     ): Response<List<Parades>>
 
-    @GET("Parada")
+    @GET("Parada/BuscarParadasPorLinha")
     suspend fun getParadesByLine(
         @Header("Cookie") certificate: String,
-        @Query("codigoLinha") idLinha: Int
+        @Query("codigoLinha") idLine: Int
     ): Response<List<Parades>>
 
     @GET("Previsao/Parada")
