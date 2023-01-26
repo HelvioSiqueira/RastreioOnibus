@@ -19,6 +19,12 @@ class MapsViewModel(
     val listParades = MutableLiveData<List<Parades>>()
     val listOfArrivalLines = MutableLiveData<List<PrevLine>>()
 
+    val isListPosVehiclesEmpty = MutableLiveData<Boolean>().apply {
+        value = false
+    }
+    val isListParadesEmpty = MutableLiveData<Boolean>().apply {
+        value = false
+    }
     val isAuthenticate = MutableLiveData<Boolean>().apply {
         value = false
     }
@@ -47,8 +53,15 @@ class MapsViewModel(
     }
 
     fun getPosVehiclesByLine(idLine: Int) {
+
         viewModelScope.launch {
-            listPosVehicles.value = manager.getPosVehiclesByLineUseCase(::haveError, idLine)
+            val resultList = manager.getPosVehiclesByLineUseCase(::haveError, idLine)
+
+            if(resultList.isNotEmpty()){
+                listPosVehicles.value = resultList
+            } else {
+                isListPosVehiclesEmpty.value = true
+            }
         }
     }
 
@@ -60,7 +73,13 @@ class MapsViewModel(
 
     fun getParadesByLine(idLine: Int) {
         viewModelScope.launch {
-            listParades.value = manager.getParadesByLineUseCase(::haveError, idLine)
+            val resultList = manager.getParadesByLineUseCase(::haveError, idLine)
+
+            if(resultList.isNotEmpty()){
+                listParades.value = resultList
+            } else {
+                isListParadesEmpty.value = true
+            }
         }
     }
 

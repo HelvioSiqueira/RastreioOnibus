@@ -117,13 +117,13 @@
             android:layout_marginTop="10dp"
             android:text="@string/txt_filter_bus"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@id/inputTextLine"
+            app:layout_constraintBottom_toTopOf="@id/layoutTextLine"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Onibus" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/inputTextLine"
+            android:id="@+id/layoutTextLine"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -136,6 +136,7 @@
             tools:hint="Linha">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputTextLine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -148,13 +149,13 @@
             android:layout_marginHorizontal="10dp"
             android:text="@string/txt_filter_parades"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@id/inputTextParade"
+            app:layout_constraintBottom_toTopOf="@id/layoutTextParade"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/inputTextLine"
+            app:layout_constraintTop_toBottomOf="@id/layoutTextLine"
             tools:text="Paradas" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/inputTextParade"
+            android:id="@+id/layoutTextParade"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -166,13 +167,14 @@
             tools:hint="Localização">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputTextParade"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/inputTextParadeLine"
+            android:id="@+id/layoutTextParadeLine"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -181,10 +183,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/inputTextParade"
+            app:layout_constraintTop_toBottomOf="@id/layoutTextParade"
             tools:hint="Linha">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputTextParadeLine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

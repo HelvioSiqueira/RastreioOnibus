@@ -3,10 +3,11 @@ package com.example.rastreioonibus.presentation
 import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ActivityMainBinding
@@ -14,16 +15,11 @@ import com.example.rastreioonibus.domain.model.Parades
 import com.example.rastreioonibus.domain.model.Vehicles
 import com.example.rastreioonibus.presentation.map.DetailsDialog
 import com.example.rastreioonibus.presentation.map.MapsViewModel
-import com.example.rastreioonibus.presentation.util.ConnectivityState
-import com.example.rastreioonibus.presentation.util.MyBitmapCache
-import com.example.rastreioonibus.presentation.util.StatesOfCardMessage
-import com.example.rastreioonibus.presentation.util.toBitmap
+import com.example.rastreioonibus.presentation.util.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -37,28 +33,20 @@ class MainActivity :
     private var listPosVehicles = listOf<Vehicles>()
     private var listParades = listOf<Parades>()
 
-    private lateinit var statesOfCardMessage: StatesOfCardMessage
-
+    private lateinit var binding: ActivityMainBinding
     private lateinit var behaviorDetailsParades: BottomSheetBehavior<LinearLayout>
     private lateinit var behaviorFilter: BottomSheetBehavior<ConstraintLayout>
-
-    private lateinit var bitmapCache: MyBitmapCache
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val fragmentMap = supportFragmentManager
             .findFragmentById(R.id.fragmentMap) as SupportMapFragment
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val connectivityState = ConnectivityState(connectivityManager)
-
-        bitmapCache = MyBitmapCache(this, 1)
-
-        statesOfCardMessage = StatesOfCardMessage(this, binding)
 
         behaviorDetailsParades =
             BottomSheetBehavior.from(binding.bottomSheetDetailsParades)
@@ -67,24 +55,50 @@ class MainActivity :
         behaviorDetailsParades.state = BottomSheetBehavior.STATE_HIDDEN
         behaviorFilter.state = BottomSheetBehavior.STATE_HIDDEN
 
-        if (!connectivityState.haveInternetOnInitApp()) {
-            statesOfCardMessage.showMessageProblem(resources.getString(R.string.txt_no_conection))
+        if (!connectivityManager.haveInternetOnInitApp()) {
+            binding.showMessageProblem(resources.getString(R.string.txt_no_conection))
+        }
+
+        binding.inputTextParade.doOnTextChanged { text, _, _, count ->
+            if (count > 0) {
+                binding.layoutTextParadeLine.isEnabled = false
+            } else if (text.isNullOrBlank()) {
+                binding.layoutTextParadeLine.isEnabled = true
+            }
+        }
+
+        binding.inputTextParadeLine.doOnTextChanged { text, _, _, count ->
+            if (count > 0) {
+                binding.layoutTextParade.isEnabled = false
+            } else if (text.isNullOrBlank()) {
+                binding.layoutTextParade.isEnabled = true
+            }
         }
 
         binding.fabFilter.setOnClickListener {
-            behaviorDetailsParades.state = BottomSheetBehavior.STATE_HIDDEN
-            behaviorFilter.state = BottomSheetBehavior.STATE_EXPANDED
+            if (behaviorFilter.state == BottomSheetBehavior.STATE_EXPANDED) {
+                viewModel.search(binding)
+            } else {
+                behaviorDetailsParades.state = BottomSheetBehavior.STATE_HIDDEN
+                behaviorFilter.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }
 
-            Log.d("HSV", viewModel.endLoading.value.toString())
-            viewModel.getPosVehiclesByLine(2506)
-            viewModel.getParadesByLine(2506)
+        viewModel.isListPosVehiclesEmpty.observe(this) {
+            if (it) {
+                Toast.makeText(this, "Veiculos não encotrados", Toast.LENGTH_SHORT).show()
+            }
+        }
 
-
+        viewModel.isListParadesEmpty.observe(this) {
+            if (it) {
+                Toast.makeText(this, "Paradas não encotrados", Toast.LENGTH_SHORT).show()
+            }
         }
 
         fragmentMap.getMapAsync {
             googleMap = it
-            connectivityState.networkCallback(
+            connectivityManager.networkCallback(
                 ::callbackOnAvailable,
                 ::callbackOnLost
             )
@@ -117,7 +131,9 @@ class MainActivity :
         }
 
         viewModel.listPosVehicles.observe(this) {
-            listPosVehicles = it
+            if (it.isNotEmpty()) {
+                listPosVehicles = it
+            }
         }
     }
 
@@ -128,7 +144,7 @@ class MainActivity :
             mapType = GoogleMap.MAP_TYPE_NORMAL
         }
 
-        googleMap.run {
+        googleMap.apply {
             animateCamera(CameraUpdateFactory.newLatLngZoom(origin, 15F))
             uiSettings.isZoomControlsEnabled = true
             uiSettings.isMyLocationButtonEnabled = true
@@ -136,20 +152,19 @@ class MainActivity :
         }
 
         viewModel.error.observe(this) {
-            statesOfCardMessage.showMessageProblem(
+            binding.showMessageProblem(
                 resources.getString(R.string.txt_not_successful_response)
             )
         }
 
         viewModel.endLoading.observe(this) {
             if (it) {
-                statesOfCardMessage.occultMessageLoading()
+                binding.occultMessageLoading()
                 fillMap(map)
             } else {
-                statesOfCardMessage.showMessageLoading()
+                binding.showMessageLoading(this)
             }
         }
-
     }
 
     private fun fillMap(googleMap: GoogleMap) {
@@ -161,31 +176,9 @@ class MainActivity :
 
         googleMap.clear()
 
-        googleMap.run {
+        googleMap.apply {
 
-            val stop = bitmapCache.getBitmap(R.drawable.stop_svg)
-
-            listParades.forEach { parade ->
-                addMarker(
-                    MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromBitmap(stop!!))
-                        .position(LatLng(parade.latitude, parade.longitude))
-                        .title(parade.codeOfParade.toString())
-                        .snippet("parada")
-                )
-            }
-
-            val bus = bitmapCache.getBitmap(R.drawable.bus_svg)
-
-            listPosVehicles.forEach { vehicle ->
-                addMarker(
-                    MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromBitmap(bus!!))
-                        .position(LatLng(vehicle.latitude, vehicle.longitude))
-                        .title(vehicle.prefixOfVehicle)
-                        .snippet("veiculo")
-                )
-            }
+            this.addMarkersToMap(this@MainActivity, listPosVehicles, listParades)
 
             googleMap.setOnMarkerClickListener {
 
@@ -212,13 +205,13 @@ class MainActivity :
         lifecycleScope.launch {
             initLists()
             initMap(googleMap)
-            statesOfCardMessage.occultMessageProblem()
+            binding.occultMessageProblem()
         }
     }
 
     private fun callbackOnLost() {
         lifecycleScope.launch {
-            statesOfCardMessage
+            binding
                 .showMessageProblem(resources.getString(R.string.txt_no_conection))
         }
     }
