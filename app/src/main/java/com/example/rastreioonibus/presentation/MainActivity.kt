@@ -3,9 +3,11 @@ package com.example.rastreioonibus.presentation
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.doOnTextChanged
@@ -21,15 +23,17 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
-// Fazer preenchimento de markers em uma corrotina separada, para parar de travar
+// Obter localização atual do usuario
 // Exibir informações sobre as linhas
+// Colocar anuncio no app
 // Melhorar ui de lista de previsão de chegada
 // Melhorar ui de formulario de filtro
-// Mudar a interface do mapa
+// Mudar fonte das letras
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MapsViewModel by inject()
@@ -42,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var behaviorDetailsParades: BottomSheetBehavior<LinearLayout>
     private lateinit var behaviorFilter: BottomSheetBehavior<ConstraintLayout>
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,11 +59,12 @@ class MainActivity : AppCompatActivity() {
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         behaviorDetailsParades =
-            BottomSheetBehavior.from(binding.bottomSheetDetailsParades)
-        behaviorFilter = BottomSheetBehavior.from(binding.bottomSheetFilter)
-
-        behaviorDetailsParades.state = BottomSheetBehavior.STATE_HIDDEN
-        behaviorFilter.state = BottomSheetBehavior.STATE_HIDDEN
+            BottomSheetBehavior.from(binding.bottomSheetDetailsParades).apply {
+                state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        behaviorFilter = BottomSheetBehavior.from(binding.bottomSheetFilter).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
 
         if (!connectivityManager.haveInternetOnInitApp()) {
             binding.showMessageProblem(resources.getString(R.string.txt_no_conection))
@@ -146,7 +152,7 @@ class MainActivity : AppCompatActivity() {
         val origin = LatLng(-23.561706, -46.655981)
 
         googleMap = map.apply {
-            mapType = GoogleMap.MAP_TYPE_NORMAL
+            setMapStyle(MapStyleOptions.loadRawResourceStyle(this@MainActivity, R.raw.map_style))
             animateCamera(CameraUpdateFactory.newLatLngZoom(origin, 15F))
             uiSettings.isZoomControlsEnabled = true
             uiSettings.isMyLocationButtonEnabled = true

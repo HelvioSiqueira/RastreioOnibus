@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.LayoutDetailsBinding
 import com.example.rastreioonibus.presentation.adapter.LinesListAdapter
 import kotlinx.coroutines.android.awaitFrame
@@ -38,7 +39,13 @@ class DetailsDialog : Fragment() {
         val idParadeOrVehicle = arguments?.getString(EXTRA_TITLE)
         val parade = viewModel.getSelectedParade(idParadeOrVehicle ?: "706334")
 
-        npParade.text = parade?.nameOfParade
+        parade?.nameOfParade.let {
+            if (it.isNullOrBlank()) {
+                npParade.text = resources.getString(R.string.txt_without_info)
+            } else {
+                npParade.text = parade?.nameOfParade
+            }
+        }
         edParade.text = parade?.addressOfParade
 
         viewModel.getArrivalVehicles(parade?.codeOfParade ?: 0)

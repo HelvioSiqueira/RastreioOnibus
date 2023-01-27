@@ -78,8 +78,9 @@
         android:id="@+id/fabFilter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
+        android:layout_gravity="bottom|end"
         android:layout_margin="10dp"
+        app:backgroundTint="@color/gray"
         android:src="@drawable/baseline_filter_alt_24" />
 
     <LinearLayout
@@ -106,6 +107,7 @@
         android:background="@color/white"
         android:clickable="false"
         android:focusable="false"
+        android:paddingBottom="70dp"
         app:behavior_hideable="true"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 

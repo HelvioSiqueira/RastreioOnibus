@@ -9,6 +9,7 @@
         android:id="@+id/layoutParade"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="8dp"
         android:background="@color/gray"
         app:layout_constraintBottom_toTopOf="@id/rvListLines"
         app:layout_constraintEnd_toEndOf="parent"
