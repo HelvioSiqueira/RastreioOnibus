@@ -16,6 +16,7 @@ class MapsViewModel(
     val error = MutableLiveData<String>()
 
     val listPosVehicles = MutableLiveData<List<Vehicles>>()
+    var listPosVehiclesAndLine: PosVehicles? = null
     val listParades = MutableLiveData<List<Parades>>()
     val listOfArrivalLines = MutableLiveData<List<PrevLine>>()
 
@@ -48,7 +49,8 @@ class MapsViewModel(
 
     fun getPosVehicles() {
         viewModelScope.launch {
-            listPosVehicles.value = manager.getPosVehicles(::haveError)
+            listPosVehiclesAndLine = manager.getPosVehicles(::haveError)
+            listPosVehicles.value = listPosVehiclesAndLine?.lines?.flatMap(PosLines::listOfVehicles)
         }
     }
 
@@ -57,7 +59,7 @@ class MapsViewModel(
         viewModelScope.launch {
             val resultList = manager.getPosVehiclesByLineUseCase(::haveError, idLine)
 
-            if(resultList.isNotEmpty()){
+            if (resultList.isNotEmpty()) {
                 listPosVehicles.value = resultList
             } else {
                 isListPosVehiclesEmpty.value = true
@@ -75,7 +77,7 @@ class MapsViewModel(
         viewModelScope.launch {
             val resultList = manager.getParadesByLineUseCase(::haveError, idLine)
 
-            if(resultList.isNotEmpty()){
+            if (resultList.isNotEmpty()) {
                 listParades.value = resultList
             } else {
                 isListParadesEmpty.value = true

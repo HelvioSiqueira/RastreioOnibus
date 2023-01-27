@@ -1,5 +1,6 @@
 package com.example.rastreioonibus.presentation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -24,8 +25,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
-class MainActivity :
-    AppCompatActivity() {
+// Fazer preenchimento de markers em uma corrotina separada, para parar de travar
+// Exibir informações sobre as linhas
+// Melhorar ui de lista de previsão de chegada
+// Melhorar ui de formulario de filtro
+// Mudar a interface do mapa
+class MainActivity : AppCompatActivity() {
 
     private val viewModel: MapsViewModel by inject()
     private lateinit var googleMap: GoogleMap
@@ -142,9 +147,6 @@ class MainActivity :
 
         googleMap = map.apply {
             mapType = GoogleMap.MAP_TYPE_NORMAL
-        }
-
-        googleMap.apply {
             animateCamera(CameraUpdateFactory.newLatLngZoom(origin, 15F))
             uiSettings.isZoomControlsEnabled = true
             uiSettings.isMyLocationButtonEnabled = true
@@ -167,20 +169,20 @@ class MainActivity :
         }
     }
 
+    @SuppressLint("PotentialBehaviorOverride")
     private fun fillMap(googleMap: GoogleMap) {
-        googleMap.setOnCameraMoveListener {
-            if (behaviorDetailsParades.state == BottomSheetBehavior.STATE_EXPANDED) {
-                behaviorDetailsParades.state = BottomSheetBehavior.STATE_HIDDEN
-            }
-        }
-
-        googleMap.clear()
-
         googleMap.apply {
+            setOnCameraMoveListener {
+                if (behaviorDetailsParades.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    behaviorDetailsParades.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+            }
 
-            this.addMarkersToMap(this@MainActivity, listPosVehicles, listParades)
+            clear()
 
-            googleMap.setOnMarkerClickListener {
+            addMarkersToMap(this@MainActivity, listPosVehicles, listParades)
+
+            setOnMarkerClickListener {
 
                 if (it.snippet == "veiculo") {
                     it.showInfoWindow()
@@ -211,8 +213,7 @@ class MainActivity :
 
     private fun callbackOnLost() {
         lifecycleScope.launch {
-            binding
-                .showMessageProblem(resources.getString(R.string.txt_no_conection))
+            binding.showMessageProblem(resources.getString(R.string.txt_no_conection))
         }
     }
 }
