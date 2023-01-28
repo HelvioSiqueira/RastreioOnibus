@@ -29,8 +29,8 @@ class HttpRepository(private val api: OlhoVivoApi) {
     suspend fun getPosVehiclesByLine(idLine: Int): Response<PosVehiclesByLines> =
         api.getPosVehiclesByLine(certificado, idLine)
 
-    suspend fun getLines(idLine: Int): Response<List<Lines>> =
-        api.getLines(certificado, idLine)
+    suspend fun getLines(term: String): Response<List<Lines>> =
+        api.getLines(certificado, term)
 
     suspend fun getParades(term: String): Response<List<Parades>> =
         api.getParades(certificado, term)

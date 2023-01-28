@@ -23,7 +23,7 @@ interface OlhoVivoApi {
     @GET("Linha/Buscar")
     suspend fun getLines(
         @Header("Cookie") certificate: String,
-        @Query("termosBusca") line: Int
+        @Query("termosBusca") line: String
     ): Response<List<Lines>>
 
     @GET("Parada/Buscar")

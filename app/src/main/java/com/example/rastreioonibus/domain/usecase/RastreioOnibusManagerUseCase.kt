@@ -7,4 +7,5 @@ data class RastreioOnibusManagerUseCase(
     val getParades: GetParadesUseCase,
     val getParadesByLineUseCase: GetParadesByLineUseCase,
     val getPrevArrival: GetPrevArrivalUseCase,
+    val getLines: GetLinesUseCase
 )

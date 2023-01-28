@@ -48,13 +48,18 @@ val androidModule = module {
     }
 
     single {
+        GetLinesUseCase(repo = get())
+    }
+
+    single {
         RastreioOnibusManagerUseCase(
             authenticate = get(),
             getPosVehicles = get(),
             getPosVehiclesByLineUseCase = get(),
             getParades = get(),
             getParadesByLineUseCase = get(),
-            getPrevArrival = get()
+            getPrevArrival = get(),
+            getLines = get()
         )
     }
 
