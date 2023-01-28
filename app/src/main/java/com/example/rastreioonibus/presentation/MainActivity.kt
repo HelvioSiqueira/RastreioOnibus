@@ -59,8 +59,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val bindingFilter = FilterLayoutBinding.inflate(layoutInflater)
-        val viewPager = binding.viewPager
         val bindingSearch = SearchLayoutBinding.inflate(layoutInflater)
+        val viewPager = binding.viewPager
         val tabLayout = binding.tabLayout
 
         val layouts = arrayOf(bindingFilter, bindingSearch)

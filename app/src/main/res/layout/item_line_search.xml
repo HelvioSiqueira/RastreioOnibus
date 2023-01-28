@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/txtCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="2506"/>
+
+    <TextView
+        android:id="@+id/txtIsCircular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/txtCode"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="false"/>
+
+    <TextView
+        android:id="@+id/txtIniSign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/txtIsCircular"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="8000"/>
+
+    <TextView
+        android:id="@+id/txtFinSign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/txtIniSign"
+        app:layout_constraintStart_toEndOf="@id/txtIniSign"
+        tools:text="10"/>
+
+    <TextView
+        android:id="@+id/txtTpTs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/txtFinSign"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="PCA.RAMOS DE AZEVEDO"/>
+
+    <TextView
+        android:id="@+id/txtTsTp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/txtTpTs"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="TERMINAL LAPA"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
