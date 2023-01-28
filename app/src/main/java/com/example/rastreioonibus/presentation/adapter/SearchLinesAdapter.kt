@@ -1,5 +1,6 @@
 package com.example.rastreioonibus.presentation.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,11 +8,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rastreioonibus.R
-import com.example.rastreioonibus.databinding.ItemLineBinding
 import com.example.rastreioonibus.databinding.ItemLineSearchBinding
 import com.example.rastreioonibus.domain.model.Lines
 
-class SearchLinesAdapter() :
+class SearchLinesAdapter(context: Context) :
     ListAdapter<Lines, SearchLinesAdapter.SearchLinesViewHolder>(SearchLinesAdapter) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =

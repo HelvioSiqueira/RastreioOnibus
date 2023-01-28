@@ -19,6 +19,7 @@ class MapsViewModel(
     var listPosVehiclesAndLine: PosVehicles? = null
     val listParades = MutableLiveData<List<Parades>>()
     val listOfArrivalLines = MutableLiveData<List<PrevLine>>()
+    var listLines = MutableLiveData<List<Lines>>()
 
     val isListPosVehiclesEmpty = MutableLiveData<Boolean>().apply {
         value = false
@@ -89,6 +90,12 @@ class MapsViewModel(
         viewModelScope.launch {
             listOfArrivalLines.value =
                 manager.getPrevArrival(::haveError, id)?.pointOfParade?.lines
+        }
+    }
+
+    fun getLines(term: String) {
+        viewModelScope.launch {
+            listLines.value = manager.getLines(::haveError, term)
         }
     }
 

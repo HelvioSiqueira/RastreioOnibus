@@ -13,15 +13,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ActivityMainBinding
 import com.example.rastreioonibus.databinding.FilterLayoutBinding
 import com.example.rastreioonibus.databinding.SearchLayoutBinding
 import com.example.rastreioonibus.domain.model.Parades
 import com.example.rastreioonibus.domain.model.Vehicles
+import com.example.rastreioonibus.presentation.adapter.CustomPagerAdapter
+import com.example.rastreioonibus.presentation.adapter.SearchLinesAdapter
 import com.example.rastreioonibus.presentation.map.DetailsDialog
 import com.example.rastreioonibus.presentation.map.MapsViewModel
-import com.example.rastreioonibus.presentation.adapter.CustomPagerAdapter
 import com.example.rastreioonibus.presentation.util.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -51,6 +54,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var behaviorDetailsParades: BottomSheetBehavior<LinearLayout>
     private lateinit var behaviorFilter: BottomSheetBehavior<ConstraintLayout>
 
+    private lateinit var searchAdapter: SearchLinesAdapter
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +81,8 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.fragmentMap) as SupportMapFragment
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        initSearchLinesAdapter(bindingSearch)
 
         behaviorDetailsParades =
             BottomSheetBehavior.from(binding.bottomSheetDetailsParades).apply {
@@ -146,17 +153,26 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
-
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
 
         binding.fabFilter.setOnClickListener {
-            if (behaviorFilter.state == BottomSheetBehavior.STATE_EXPANDED && layoutId == 0) {
-                viewModel.search(bindingFilter)
+            if (behaviorFilter.state == BottomSheetBehavior.STATE_EXPANDED) {
+
+                when (layoutId) {
+                    0 -> viewModel.search(bindingFilter)
+                    1 -> viewModel.getLines(bindingSearch.inputTextSearch.text.toString())
+                }
+
             } else {
                 behaviorDetailsParades.state = BottomSheetBehavior.STATE_HIDDEN
                 behaviorFilter.state = BottomSheetBehavior.STATE_EXPANDED
             }
+        }
+
+        viewModel.listLines.observe(this) {
+
+            searchAdapter.submitList(it)
         }
 
         fragmentMap.getMapAsync {
@@ -166,6 +182,23 @@ class MainActivity : AppCompatActivity() {
                 ::callbackOnLost
             )
         }
+    }
+
+    private fun initSearchLinesAdapter(bindingSearch: SearchLayoutBinding){
+        searchAdapter = SearchLinesAdapter()
+        val rv = bindingSearch.rvSearch
+
+        rv.adapter = searchAdapter
+        rv.layoutManager = LinearLayoutManager(this)
+
+
+
+        rv.addItemDecoration(
+            DividerItemDecoration(
+                rv.context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
     }
 
     private fun initLists() {
