@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -17,8 +16,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ActivityMainBinding
-import com.example.rastreioonibus.databinding.FilterLayoutBinding
-import com.example.rastreioonibus.databinding.SearchLayoutBinding
+import com.example.rastreioonibus.databinding.SearchBusAndStopLayoutBinding
+import com.example.rastreioonibus.databinding.SearchLinesLayoutBinding
 import com.example.rastreioonibus.domain.model.Parades
 import com.example.rastreioonibus.domain.model.Vehicles
 import com.example.rastreioonibus.presentation.adapter.CustomPagerAdapter
@@ -37,7 +36,7 @@ import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
 // Obter localização atual do usuario
-// Exibir informações sobre as linhas
+// Melhorar layout sobre infor de linhas
 // Colocar anuncio no app
 // Melhorar ui de lista de previsão de chegada
 // Melhorar ui de formulario de filtro
@@ -63,8 +62,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val bindingFilter = FilterLayoutBinding.inflate(layoutInflater)
-        val bindingSearch = SearchLayoutBinding.inflate(layoutInflater)
+        val bindingFilter = SearchBusAndStopLayoutBinding.inflate(layoutInflater)
+        val bindingSearch = SearchLinesLayoutBinding.inflate(layoutInflater)
         val viewPager = binding.viewPager
         val tabLayout = binding.tabLayout
 
@@ -116,16 +115,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        behaviorFilter.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    binding.fabFilter.setImageResource(R.drawable.baseline_filter_alt_24)
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-        })
-
         viewModel.isListPosVehiclesEmpty.observe(this) {
             if (it) {
                 Toast.makeText(this, "Veiculos não encotrados", Toast.LENGTH_SHORT).show()
@@ -141,14 +130,9 @@ class MainActivity : AppCompatActivity() {
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
-                    0 -> {
-                        binding.fabFilter.setImageResource(R.drawable.baseline_filter_alt_24)
-                        layoutId = 0
-                    }
-                    1 -> {
-                        binding.fabFilter.setImageResource(R.drawable.baseline_search_24)
-                        layoutId = 1
-                    }
+                    0 -> layoutId = 0
+
+                    1 -> layoutId = 1
                 }
             }
 
@@ -161,7 +145,17 @@ class MainActivity : AppCompatActivity() {
 
                 when (layoutId) {
                     0 -> viewModel.search(bindingFilter)
-                    1 -> viewModel.getLines(bindingSearch.inputTextSearch.text.toString())
+                    1 -> {
+
+                        bindingSearch.inputTextSearch.text.toString().let {
+                            if (it.isBlank()) {
+                                viewModel.getLines(it)
+                            } else {
+                                Toast.makeText(this, R.string.txt_without_text, Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    }
                 }
 
             } else {
@@ -171,7 +165,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.listLines.observe(this) {
-
             searchAdapter.submitList(it)
         }
 
@@ -184,8 +177,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initSearchLinesAdapter(bindingSearch: SearchLayoutBinding){
-        searchAdapter = SearchLinesAdapter()
+    private fun initSearchLinesAdapter(bindingSearch: SearchLinesLayoutBinding) {
+        searchAdapter = SearchLinesAdapter(this)
         val rv = bindingSearch.rvSearch
 
         rv.adapter = searchAdapter
@@ -239,7 +232,7 @@ class MainActivity : AppCompatActivity() {
         googleMap = map.apply {
             setMapStyle(MapStyleOptions.loadRawResourceStyle(this@MainActivity, R.raw.map_style))
             animateCamera(CameraUpdateFactory.newLatLngZoom(origin, 15F))
-            uiSettings.isZoomControlsEnabled = true
+            //uiSettings.isZoomControlsEnabled = true
             uiSettings.isMyLocationButtonEnabled = true
             uiSettings.isScrollGesturesEnabled = true
         }

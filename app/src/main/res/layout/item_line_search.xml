@@ -23,7 +23,7 @@
         tools:text="false"/>
 
     <TextView
-        android:id="@+id/txtIniSign"
+        android:id="@+id/txtSign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/txtIsCircular"
@@ -31,18 +31,10 @@
         tools:text="8000"/>
 
     <TextView
-        android:id="@+id/txtFinSign"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/txtIniSign"
-        app:layout_constraintStart_toEndOf="@id/txtIniSign"
-        tools:text="10"/>
-
-    <TextView
         android:id="@+id/txtTpTs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/txtFinSign"
+        app:layout_constraintTop_toBottomOf="@id/txtSign"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="PCA.RAMOS DE AZEVEDO"/>
 

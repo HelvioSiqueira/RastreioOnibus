@@ -81,7 +81,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="10dp"
         app:backgroundTint="@color/gray"
-        android:src="@drawable/baseline_filter_alt_24" />
+        android:src="@drawable/baseline_search_24" />
 
     <LinearLayout
         android:id="@+id/bottomSheetDetailsParades"

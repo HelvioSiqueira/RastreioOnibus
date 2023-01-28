@@ -16,8 +16,6 @@ class GetPrevArrivalUseCase(
 
         val response = repo.getPrevArrival(id)
 
-        var listOfVehicles = listOf<PrevArrival>()
-
         return if (response.isSuccessful) {
             response.body()
         } else {

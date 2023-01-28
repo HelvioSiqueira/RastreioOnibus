@@ -19,8 +19,16 @@
 
     <string-array name="tab_names">
 
-        <item>Filtro</item>
-        <item>Pesquisa</item>
+        <item>Paradas e Ônibus</item>
+        <item>Linhas</item>
 
     </string-array>
+    
+    <string name="txt_idLine">Identificador da linha: %s</string>
+    <string name="txt_isCircular">Circular? %s</string>
+    <string name="txt_sign">Letreiro da Linha %1s-%2s</string>
+    <string name="txt_direction_principal">Sentido Principal: %s</string>
+    <string name="txt_direction_secondary">Sentido Secundario: %s</string>
+    
+    <string name="txt_without_text">Nenhum texto digitado</string>
 </resources>

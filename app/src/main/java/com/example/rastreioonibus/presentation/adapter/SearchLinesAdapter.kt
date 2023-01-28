@@ -11,7 +11,7 @@ import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ItemLineSearchBinding
 import com.example.rastreioonibus.domain.model.Lines
 
-class SearchLinesAdapter(context: Context) :
+class SearchLinesAdapter(private val context: Context) :
     ListAdapter<Lines, SearchLinesAdapter.SearchLinesViewHolder>(SearchLinesAdapter) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -30,15 +30,27 @@ class SearchLinesAdapter(context: Context) :
 
         private val binding = ItemLineSearchBinding.bind(itemView)
 
-        fun bind(lines: Lines){
+        fun bind(line: Lines) {
 
             binding.apply {
-                txtCode.text = lines.codeOfLine.toString()
-                txtIsCircular.text = lines.worksInCircleMode.toString()
-                txtIniSign.text =lines.firstPartOfSignLine
-                txtFinSign.text = lines.secondPartOfSignLine.toString()
-                txtTpTs.text = lines.signOfLineDirectionPrincipal
-                txtTsTp.text = lines.signOfLineDirectionSecondary
+                txtCode.text = context.getString(R.string.txt_idLine, line.codeOfLine.toString())
+                txtIsCircular.text = context.getString(
+                    R.string.txt_isCircular,
+                    if (line.worksInCircleMode) "Sim" else "Não"
+                )
+                txtSign.text = context.getString(
+                    R.string.txt_sign,
+                    line.firstPartOfSignLine,
+                    line.secondPartOfSignLine.toString()
+                )
+                txtTpTs.text = context.getString(
+                    R.string.txt_direction_principal,
+                    line.signOfLineDirectionPrincipal
+                )
+                txtTsTp.text = context.getString(
+                    R.string.txt_direction_secondary,
+                    line.signOfLineDirectionSecondary
+                )
             }
         }
     }
