@@ -1,7 +1,6 @@
 package com.example.rastreioonibus.presentation
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
@@ -40,7 +39,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
@@ -57,17 +55,15 @@ class MainActivity : AppCompatActivity() {
     private var listParades = listOf<Parades>()
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var searchAdapter: SearchLinesAdapter
+    private var searchAdapter: SearchLinesAdapter = SearchLinesAdapter(this)
     private lateinit var behaviorDetailsParades: BottomSheetBehavior<LinearLayout>
     private lateinit var behaviorFilter: BottomSheetBehavior<ConstraintLayout>
 
-    private val LOCATION_PERMISSION_REQUEST_CODE = 1
+    private val locationRequestCode = 1
     private lateinit var locationProviderClient: FusedLocationProviderClient
     private lateinit var origin: LatLng
 
     private lateinit var connectivityManager: ConnectivityManager
-
-    private var hasFilled = false
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,33 +72,33 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val bindingSearchStopAndVehicles = SearchBusAndStopLayoutBinding.inflate(layoutInflater)
+        val bindingSearchLines = SearchLinesLayoutBinding.inflate(layoutInflater)
+
+        val tabLayout = binding.tabLayout
+        var layoutId = 0
+
         MobileAds.initialize(this)
         binding.adView.loadAd(AdRequest.Builder().build())
 
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         requestLocationPermission()
 
-        val bindingSearchStopAndVehicles = SearchBusAndStopLayoutBinding.inflate(layoutInflater)
-        val bindingSearchLines = SearchLinesLayoutBinding.inflate(layoutInflater)
-        val viewPager = binding.viewPager
-        val tabLayout = binding.tabLayout
-
-        val layouts = arrayOf(bindingSearchStopAndVehicles, bindingSearchLines)
-
-        val adapter = CustomPagerAdapter(this@MainActivity, layouts)
-        viewPager.adapter = adapter
-
-        tabLayout.setupWithViewPager(viewPager)
-
-        var layoutId = 0
-
-        val fragmentMap = supportFragmentManager
-            .findFragmentById(R.id.fragmentMap) as SupportMapFragment
         connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        initSearchLinesAdapter(bindingSearchLines)
-        setUrlOnPrivacyPolicy(bindingSearchStopAndVehicles)
+        if (!connectivityManager.haveInternetOnInitApp()) {
+            binding.showMessageProblem(resources.getString(R.string.txt_no_conection))
+        }
+
+        binding.setupTabAndPager(
+            bindingSearchStopAndVehicles,
+            bindingSearchLines,
+            this
+        )
+
+        bindingSearchStopAndVehicles.setUrlOnPrivacyPolicy()
+        bindingSearchLines.initSearchLinesAdapter(this, searchAdapter)
 
         behaviorDetailsParades =
             BottomSheetBehavior.from(binding.bottomSheetDetailsParades).apply {
@@ -110,10 +106,6 @@ class MainActivity : AppCompatActivity() {
             }
         behaviorFilter = BottomSheetBehavior.from(binding.bottomSheetFilter).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
-        }
-
-        if (!connectivityManager.haveInternetOnInitApp()) {
-            binding.showMessageProblem(resources.getString(R.string.txt_no_conection))
         }
 
         bindingSearchStopAndVehicles.apply {
@@ -140,7 +132,6 @@ class MainActivity : AppCompatActivity() {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
                     0 -> layoutId = 0
-
                     1 -> layoutId = 1
                 }
             }
@@ -149,7 +140,7 @@ class MainActivity : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
 
-        binding.fabFilter.setOnClickListener {
+        binding.fabSearch.setOnClickListener {
             if (behaviorFilter.state == BottomSheetBehavior.STATE_EXPANDED) {
 
                 when (layoutId) {
@@ -190,12 +181,25 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.error.observe(this) {
-            binding.showMessageProblem(
-                resources.getString(R.string.txt_not_successful_response)
-            )
+            binding.showMessageProblem(resources.getString(R.string.txt_not_successful_response))
         }
 
-        fragmentMap.getMapAsync {
+        viewModel.isAuthenticate.observe(this) {
+            if (it) {
+                viewModel.getPosVehicles()
+                viewModel.getParades("")
+            }
+        }
+
+        viewModel.listParades.observe(this) {
+            listParades = it
+        }
+
+        viewModel.listPosVehicles.observe(this) {
+            listPosVehicles = it
+        }
+
+        (supportFragmentManager.findFragmentById(R.id.fragmentMap) as SupportMapFragment).getMapAsync {
             googleMap = it
         }
     }
@@ -208,7 +212,7 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
-            LOCATION_PERMISSION_REQUEST_CODE -> {
+            locationRequestCode -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     requestLocationPermission()
@@ -230,33 +234,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initSearchLinesAdapter(bindingSearch: SearchLinesLayoutBinding) {
-        searchAdapter = SearchLinesAdapter(this)
-        val rv = bindingSearch.rvSearch
-
-        rv.adapter = searchAdapter
-        rv.layoutManager = LinearLayoutManager(this)
-    }
-
-    private fun initLists() {
-        viewModel.authenticate(this)
-
-        viewModel.isAuthenticate.observe(this) {
-            if (it) {
-                viewModel.getPosVehicles()
-                viewModel.getParades("")
-            }
-        }
-
-        viewModel.listParades.observe(this) {
-            listParades = it
-        }
-
-        viewModel.listPosVehicles.observe(this) {
-            listPosVehicles = it
-        }
-    }
-
     private fun initMap(map: GoogleMap) {
         googleMap = map.apply {
             setMapStyle(MapStyleOptions.loadRawResourceStyle(this@MainActivity, R.raw.map_style))
@@ -267,11 +244,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.endLoading.observe(this) {
             if (it) {
                 binding.occultMessageLoading()
-
-                if(!hasFilled){
-                    fillMap(map)
-                    hasFilled = true
-                }
+                fillMap(map)
             } else {
                 binding.showMessageLoading(this)
             }
@@ -287,7 +260,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             clear()
-
             addMarkersToMap(this@MainActivity, listPosVehicles, listParades)
 
             setOnMarkerClickListener {
@@ -319,7 +291,7 @@ class MainActivity : AppCompatActivity() {
         ) {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationRequestCode
             )
         } else {
             locationProviderClient.lastLocation.addOnSuccessListener {
@@ -338,26 +310,9 @@ class MainActivity : AppCompatActivity() {
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
     }
 
-    private fun setUrlOnPrivacyPolicy(bindingSearchStopAndVehicles: SearchBusAndStopLayoutBinding) {
-        val textUrl = "Politica de Privacidade"
-        val spannable = SpannableString(textUrl)
-
-        spannable.setSpan(
-            URLSpan("https://www.freeprivacypolicy.com/live/a1bcd0d2-b1e0-42af-8c12-81dd84fa82cc"),
-            textUrl.indexOf(textUrl),
-            textUrl.indexOf(textUrl) + textUrl.length,
-            Spanned.SPAN_INCLUSIVE_EXCLUSIVE
-        )
-
-        bindingSearchStopAndVehicles.txtPrivacyPolicy.apply {
-            movementMethod = LinkMovementMethod.getInstance()
-            text = spannable
-        }
-    }
-
     private fun callbackOnAvailable() {
         lifecycleScope.launch {
-            initLists()
+            viewModel.authenticate(this@MainActivity)
             initMap(googleMap)
             binding.occultMessageProblem()
         }
