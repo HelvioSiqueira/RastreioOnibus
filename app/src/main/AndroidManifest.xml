@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.rastreioonibus" >
-    <!-- Permissão para utilizar internet -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- Permissão para obter localização baseada na rede(Wifi ou movel) -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Permissão para obter localização baseada no GPS -->
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-feature
@@ -51,6 +51,7 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713"/>
+
     </application>
 
 </manifest>

@@ -11,7 +11,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 fun GoogleMap.addMarkersToMap(
     context: Context,
-    listOfVehicles: List<Vehicles>,
+    listOfVehicles: List<Vehicles>?,
     listOfParades: List<Parades>
 ) {
 
@@ -29,7 +29,7 @@ fun GoogleMap.addMarkersToMap(
         )
     }
 
-    listOfVehicles.forEach { vehicle ->
+    listOfVehicles?.forEach { vehicle ->
         this.addMarker(
             MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromBitmap(bus!!))

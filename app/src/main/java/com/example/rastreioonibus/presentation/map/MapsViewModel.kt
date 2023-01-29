@@ -102,8 +102,6 @@ class MapsViewModel(
 
     fun getSelectedParade(id: String) = listParades.value?.find { it.codeOfParade == id.toInt() }
 
-    fun getSelectedVehicle(id: String) = listPosVehicles.value?.find { it.prefixOfVehicle == id }
-
     private fun haveError(error: String) {
         this.error.value = error
     }

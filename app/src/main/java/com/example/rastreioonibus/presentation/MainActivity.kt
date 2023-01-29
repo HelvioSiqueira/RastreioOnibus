@@ -1,7 +1,9 @@
 package com.example.rastreioonibus.presentation
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +16,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,11 +33,14 @@ import com.example.rastreioonibus.presentation.map.MapsViewModel
 import com.example.rastreioonibus.presentation.util.*
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
@@ -47,14 +53,21 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MapsViewModel by inject()
     private lateinit var googleMap: GoogleMap
 
-    private var listPosVehicles = listOf<Vehicles>()
+    private var listPosVehicles: List<Vehicles>? = listOf()
     private var listParades = listOf<Parades>()
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var searchAdapter: SearchLinesAdapter
     private lateinit var behaviorDetailsParades: BottomSheetBehavior<LinearLayout>
     private lateinit var behaviorFilter: BottomSheetBehavior<ConstraintLayout>
 
-    private lateinit var searchAdapter: SearchLinesAdapter
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
+    private lateinit var locationProviderClient: FusedLocationProviderClient
+    private lateinit var origin: LatLng
+
+    private lateinit var connectivityManager: ConnectivityManager
+
+    private var hasFilled = false
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +78,9 @@ class MainActivity : AppCompatActivity() {
 
         MobileAds.initialize(this)
         binding.adView.loadAd(AdRequest.Builder().build())
+
+        locationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        requestLocationPermission()
 
         val bindingSearchStopAndVehicles = SearchBusAndStopLayoutBinding.inflate(layoutInflater)
         val bindingSearchLines = SearchLinesLayoutBinding.inflate(layoutInflater)
@@ -82,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
         val fragmentMap = supportFragmentManager
             .findFragmentById(R.id.fragmentMap) as SupportMapFragment
-        val connectivityManager =
+        connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         initSearchLinesAdapter(bindingSearchLines)
@@ -181,10 +197,36 @@ class MainActivity : AppCompatActivity() {
 
         fragmentMap.getMapAsync {
             googleMap = it
-            connectivityManager.networkCallback(
-                ::callbackOnAvailable,
-                ::callbackOnLost
-            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            LOCATION_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    requestLocationPermission()
+
+                    connectivityManager.networkCallback(
+                        ::callbackOnAvailable,
+                        ::callbackOnLost
+                    )
+                } else {
+                    origin = LatLng(-23.561706, -46.655981)
+                    animateCamera(origin)
+
+                    connectivityManager.networkCallback(
+                        ::callbackOnAvailable,
+                        ::callbackOnLost
+                    )
+                }
+            }
         }
     }
 
@@ -216,11 +258,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initMap(map: GoogleMap) {
-        val origin = LatLng(-23.561706, -46.655981)
-
         googleMap = map.apply {
             setMapStyle(MapStyleOptions.loadRawResourceStyle(this@MainActivity, R.raw.map_style))
-            animateCamera(CameraUpdateFactory.newLatLngZoom(origin, 15F))
             uiSettings.isMyLocationButtonEnabled = true
             uiSettings.isScrollGesturesEnabled = true
         }
@@ -228,7 +267,11 @@ class MainActivity : AppCompatActivity() {
         viewModel.endLoading.observe(this) {
             if (it) {
                 binding.occultMessageLoading()
-                fillMap(map)
+
+                if(!hasFilled){
+                    fillMap(map)
+                    hasFilled = true
+                }
             } else {
                 binding.showMessageLoading(this)
             }
@@ -249,7 +292,7 @@ class MainActivity : AppCompatActivity() {
 
             setOnMarkerClickListener {
 
-                if (it.snippet == "veiculo") {
+                if (it.snippet == "veiculo" || it.title == "Localização Atual") {
                     it.showInfoWindow()
                 } else {
                     val fragment = DetailsDialog.newInstance(it.title ?: "")
@@ -268,13 +311,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun animateCamera(latLng: LatLng) {
-        googleMap.animateCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                latLng,
-                15f
+    private fun requestLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE
             )
-        )
+        } else {
+            locationProviderClient.lastLocation.addOnSuccessListener {
+                origin = LatLng(it.latitude, it.longitude)
+                animateCamera(origin)
+
+                connectivityManager.networkCallback(
+                    ::callbackOnAvailable,
+                    ::callbackOnLost
+                )
+            }
+        }
+    }
+
+    private fun animateCamera(latLng: LatLng) {
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
     }
 
     private fun setUrlOnPrivacyPolicy(bindingSearchStopAndVehicles: SearchBusAndStopLayoutBinding) {
