@@ -43,7 +43,7 @@ android {
 
 dependencies {
 
-    implementation 'com.google.maps.android:android-maps-utils:3.3.0'
+    implementation 'com.google.android.gms:play-services-ads:21.4.0'
 
     //MaterialSearchView
     implementation "com.github.mancj:MaterialSearchBar:$materialsearchview_version"

@@ -25,6 +25,8 @@ import com.example.rastreioonibus.presentation.adapter.SearchLinesAdapter
 import com.example.rastreioonibus.presentation.map.DetailsDialog
 import com.example.rastreioonibus.presentation.map.MapsViewModel
 import com.example.rastreioonibus.presentation.util.*
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -57,6 +59,9 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        MobileAds.initialize(this)
+        binding.adView.loadAd(AdRequest.Builder().build())
 
         val bindingSearchStopAndVehicles = SearchBusAndStopLayoutBinding.inflate(layoutInflater)
         val bindingSearchLines = SearchLinesLayoutBinding.inflate(layoutInflater)

@@ -18,6 +18,18 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
+            <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/adView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                ads:adSize="BANNER"
+                ads:layout_constraintTop_toTopOf="parent"
+                ads:layout_constraintEnd_toEndOf="parent"
+                ads:layout_constraintStart_toStartOf="parent"
+                ads:adUnitId="ca-app-pub-3940256099942544/6300978111"/>
+
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragmentMap"
                 android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -26,7 +38,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/adView"
                 tools:layout="@layout/activity_main" />
 
             <androidx.cardview.widget.CardView
@@ -81,8 +93,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="10dp"
-        app:backgroundTint="@color/light_blue_700"
-        android:src="@drawable/baseline_search_24" />
+        android:src="@drawable/baseline_search_24"
+        app:backgroundTint="@color/light_blue_700" />
 
     <LinearLayout
         android:id="@+id/bottomSheetDetailsParades"
@@ -113,22 +125,22 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabIndicatorColor="@color/white"
-            app:tabRippleColor="@color/light_blue_300"
-            app:tabTextColor="@color/white"
-            app:tabBackground="@color/light_blue_700"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:tabBackground="@color/light_blue_700"
+            app:tabIndicatorColor="@color/light_blue_300"
+            app:tabRippleColor="@color/light_blue_300"
+            app:tabTextColor="@color/white" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="600dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tabLayout"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/tabLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
