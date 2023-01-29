@@ -33,7 +33,7 @@
                 android:id="@+id/cardMessage"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:backgroundTint="@color/gray"
+                android:backgroundTint="@color/light_blue_700"
                 android:padding="8dp"
                 android:visibility="gone"
                 app:cardCornerRadius="10dp"
@@ -60,6 +60,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAlignment="center"
+                        android:textColor="@color/white"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="10dp"
-        app:backgroundTint="@color/gray"
+        app:backgroundTint="@color/light_blue_700"
         android:src="@drawable/baseline_search_24" />
 
     <LinearLayout
@@ -112,6 +113,10 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:tabIndicatorColor="@color/white"
+            app:tabRippleColor="@color/light_blue_300"
+            app:tabTextColor="@color/white"
+            app:tabBackground="@color/light_blue_700"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

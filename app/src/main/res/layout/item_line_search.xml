@@ -9,7 +9,7 @@
         android:id="@+id/layoutDirection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/red_300"
+        android:background="@color/light_blue_300"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="0dp"
@@ -22,6 +22,7 @@
             android:layout_width="wrap_content"
             android:textSize="20sp"
             android:layout_marginEnd="20dp"
+            android:textColor="@color/white"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layoutDirection"
@@ -30,6 +31,7 @@
         <TextView
             android:id="@+id/txtTpTs"
             android:layout_width="wrap_content"
+            android:textColor="@color/white"
             android:layout_height="wrap_content"
             tools:text="PCA.RAMOS DE AZEVEDO" />
 
@@ -43,6 +45,7 @@
         <TextView
             android:id="@+id/txtTsTp"
             android:layout_width="wrap_content"
+            android:textColor="@color/white"
             android:layout_height="wrap_content"
             tools:text="TERMINAL LAPA" />
 

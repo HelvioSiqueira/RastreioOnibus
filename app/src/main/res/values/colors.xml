@@ -11,4 +11,14 @@
     <color name="red_300">#F0645E</color>
     <color name="opaque_black">#4D000000</color>
     <color name="gray">#373737</color>
+    <color name="red_500">#F44336</color>
+    <color name="cian_200">#36E7F4</color>
+    <color name="orange_400">#F4A236</color>
+
+    <color name="primaryColor">#f44330</color>
+    <color name="primaryLightColor">#ff795b</color>
+    <color name="primaryDarkColor">#b90005</color>
+    <color name="primaryTextColor">#000000</color>
+    <color name="light_blue_700">#0288D1</color>
+    <color name="light_blue_300">#4FC3F7</color>
 </resources>

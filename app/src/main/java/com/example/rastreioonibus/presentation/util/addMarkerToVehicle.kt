@@ -16,8 +16,8 @@ fun GoogleMap.addMarkersToMap(
 ) {
 
     val bitmapCache = MyBitmapCache(context, 1)
-    val bus = bitmapCache.getBitmap(R.drawable.bus_svg, R.color.purple_500)
-    val stop = bitmapCache.getBitmap(R.drawable.stop_svg, R.color.white)
+    val bus = bitmapCache.getBitmap(R.drawable.bus_svg, R.color.light_blue_300)
+    val stop = bitmapCache.getBitmap(R.drawable.stop_svg, R.color.light_blue_700)
 
     listOfParades.forEach { parade ->
         addMarker(

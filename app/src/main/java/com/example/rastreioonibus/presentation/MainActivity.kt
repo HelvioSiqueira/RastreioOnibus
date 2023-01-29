@@ -36,10 +36,7 @@ import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
 // Obter localização atual do usuario
-// Melhorar layout sobre infor de linhas
 // Colocar anuncio no app
-// Melhorar ui de lista de previsão de chegada
-// Melhorar ui de formulario de filtro
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MapsViewModel by inject()
