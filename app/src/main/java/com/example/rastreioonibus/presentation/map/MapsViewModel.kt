@@ -72,6 +72,7 @@ class MapsViewModel(
         viewModelScope.launch {
             listParades.value = manager.getParades(::haveError, term)
         }
+
     }
 
     fun getParadesByLine(idLine: Int) {

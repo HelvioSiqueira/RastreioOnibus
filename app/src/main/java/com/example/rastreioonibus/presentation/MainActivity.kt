@@ -5,6 +5,10 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.URLSpan
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -12,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ActivityMainBinding
@@ -38,7 +41,7 @@ import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
 // Obter localização atual do usuario
-// Colocar anuncio no app
+// Fazer com camera vá para local pesquisado
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MapsViewModel by inject()
@@ -83,6 +86,7 @@ class MainActivity : AppCompatActivity() {
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         initSearchLinesAdapter(bindingSearchLines)
+        setUrlOnPrivacyPolicy(bindingSearchStopAndVehicles)
 
         behaviorDetailsParades =
             BottomSheetBehavior.from(binding.bottomSheetDetailsParades).apply {
@@ -113,18 +117,6 @@ class MainActivity : AppCompatActivity() {
                 } else if (text.isNullOrBlank()) {
                     layoutTextParade.isEnabled = true
                 }
-            }
-        }
-
-        viewModel.isListPosVehiclesEmpty.observe(this) {
-            if (it) {
-                Toast.makeText(this, "Veiculos não encotrados", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        viewModel.isListParadesEmpty.observe(this) {
-            if (it) {
-                Toast.makeText(this, "Paradas não encotrados", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -165,8 +157,26 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        viewModel.isListPosVehiclesEmpty.observe(this) {
+            if (it) {
+                Toast.makeText(this, "Veiculos não encotrados", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.isListParadesEmpty.observe(this) {
+            if (it) {
+                Toast.makeText(this, "Paradas não encotrados", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         viewModel.listLines.observe(this) {
             searchAdapter.submitList(it)
+        }
+
+        viewModel.error.observe(this) {
+            binding.showMessageProblem(
+                resources.getString(R.string.txt_not_successful_response)
+            )
         }
 
         fragmentMap.getMapAsync {
@@ -198,23 +208,10 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.listParades.observe(this) {
             listParades = it
-
-            val first = it.first()
-
-            googleMap.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    LatLng(
-                        first.latitude,
-                        first.longitude
-                    ), 15f
-                )
-            )
         }
 
         viewModel.listPosVehicles.observe(this) {
-            if (it.isNotEmpty()) {
-                listPosVehicles = it
-            }
+            listPosVehicles = it
         }
     }
 
@@ -224,15 +221,8 @@ class MainActivity : AppCompatActivity() {
         googleMap = map.apply {
             setMapStyle(MapStyleOptions.loadRawResourceStyle(this@MainActivity, R.raw.map_style))
             animateCamera(CameraUpdateFactory.newLatLngZoom(origin, 15F))
-            //uiSettings.isZoomControlsEnabled = true
             uiSettings.isMyLocationButtonEnabled = true
             uiSettings.isScrollGesturesEnabled = true
-        }
-
-        viewModel.error.observe(this) {
-            binding.showMessageProblem(
-                resources.getString(R.string.txt_not_successful_response)
-            )
         }
 
         viewModel.endLoading.observe(this) {
@@ -245,7 +235,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("PotentialBehaviorOverride")
     private fun fillMap(googleMap: GoogleMap) {
         googleMap.apply {
             setOnCameraMoveListener {
@@ -276,6 +265,32 @@ class MainActivity : AppCompatActivity() {
 
                 true
             }
+        }
+    }
+
+    private fun animateCamera(latLng: LatLng) {
+        googleMap.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                latLng,
+                15f
+            )
+        )
+    }
+
+    private fun setUrlOnPrivacyPolicy(bindingSearchStopAndVehicles: SearchBusAndStopLayoutBinding) {
+        val textUrl = "Politica de Privacidade"
+        val spannable = SpannableString(textUrl)
+
+        spannable.setSpan(
+            URLSpan("https://www.freeprivacypolicy.com/live/a1bcd0d2-b1e0-42af-8c12-81dd84fa82cc"),
+            textUrl.indexOf(textUrl),
+            textUrl.indexOf(textUrl) + textUrl.length,
+            Spanned.SPAN_INCLUSIVE_EXCLUSIVE
+        )
+
+        bindingSearchStopAndVehicles.txtPrivacyPolicy.apply {
+            movementMethod = LinkMovementMethod.getInstance()
+            text = spannable
         }
     }
 
