@@ -24,11 +24,13 @@
 
     </string-array>
     
-    <string name="txt_idLine">Identificador da linha: %s</string>
+    <string name="txt_idLine">%s</string>
     <string name="txt_isCircular">Circular? %s</string>
-    <string name="txt_sign">Letreiro da Linha %1s-%2s</string>
-    <string name="txt_direction_principal">Sentido Principal: %s</string>
-    <string name="txt_direction_secondary">Sentido Secundario: %s</string>
+    <string name="txt_sign">Letreiro da Linha: %1s-%2s</string>
+    <string name="txt_direction_tpts">Terminal Principal para Terminal Secundário</string>
+    <string name="txt_direction_tstp">Terminal Secundário para Terminal Principal</string>
+    <string name="txt_direction_principal">%s</string>
+    <string name="txt_direction_secondary">%s</string>
     
     <string name="txt_without_text">Nenhum texto digitado</string>
 </resources>

@@ -40,7 +40,6 @@ import org.koin.android.ext.android.inject
 // Colocar anuncio no app
 // Melhorar ui de lista de previsão de chegada
 // Melhorar ui de formulario de filtro
-// Mudar fonte das letras
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MapsViewModel by inject()
@@ -62,12 +61,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val bindingFilter = SearchBusAndStopLayoutBinding.inflate(layoutInflater)
-        val bindingSearch = SearchLinesLayoutBinding.inflate(layoutInflater)
+        val bindingSearchStopAndVehicles = SearchBusAndStopLayoutBinding.inflate(layoutInflater)
+        val bindingSearchLines = SearchLinesLayoutBinding.inflate(layoutInflater)
         val viewPager = binding.viewPager
         val tabLayout = binding.tabLayout
 
-        val layouts = arrayOf(bindingFilter, bindingSearch)
+        val layouts = arrayOf(bindingSearchStopAndVehicles, bindingSearchLines)
 
         val adapter = CustomPagerAdapter(this@MainActivity, layouts)
         viewPager.adapter = adapter
@@ -81,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        initSearchLinesAdapter(bindingSearch)
+        initSearchLinesAdapter(bindingSearchLines)
 
         behaviorDetailsParades =
             BottomSheetBehavior.from(binding.bottomSheetDetailsParades).apply {
@@ -95,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             binding.showMessageProblem(resources.getString(R.string.txt_no_conection))
         }
 
-        bindingFilter.apply {
+        bindingSearchStopAndVehicles.apply {
             inputTextParade.doOnTextChanged { text, _, _, count ->
                 if (count > 0) {
                     layoutTextParadeLine.isEnabled = false
@@ -105,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        bindingFilter.apply {
+        bindingSearchStopAndVehicles.apply {
             inputTextParadeLine.doOnTextChanged { text, _, _, count ->
                 if (count > 0) {
                     layoutTextParade.isEnabled = false
@@ -144,11 +143,11 @@ class MainActivity : AppCompatActivity() {
             if (behaviorFilter.state == BottomSheetBehavior.STATE_EXPANDED) {
 
                 when (layoutId) {
-                    0 -> viewModel.search(bindingFilter)
+                    0 -> viewModel.search(bindingSearchStopAndVehicles)
                     1 -> {
 
-                        bindingSearch.inputTextSearch.text.toString().let {
-                            if (it.isBlank()) {
+                        bindingSearchLines.inputTextSearch.text.toString().let {
+                            if (it.isNotBlank()) {
                                 viewModel.getLines(it)
                             } else {
                                 Toast.makeText(this, R.string.txt_without_text, Toast.LENGTH_SHORT)
@@ -183,15 +182,6 @@ class MainActivity : AppCompatActivity() {
 
         rv.adapter = searchAdapter
         rv.layoutManager = LinearLayoutManager(this)
-
-
-
-        rv.addItemDecoration(
-            DividerItemDecoration(
-                rv.context,
-                DividerItemDecoration.VERTICAL
-            )
-        )
     }
 
     private fun initLists() {

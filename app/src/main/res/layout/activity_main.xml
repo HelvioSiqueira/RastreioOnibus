@@ -86,7 +86,7 @@
     <LinearLayout
         android:id="@+id/bottomSheetDetailsParades"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="600dp"
         android:background="@color/white"
         android:orientation="vertical"
         app:behavior_hideable="true"
@@ -119,7 +119,7 @@
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="600dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tabLayout"

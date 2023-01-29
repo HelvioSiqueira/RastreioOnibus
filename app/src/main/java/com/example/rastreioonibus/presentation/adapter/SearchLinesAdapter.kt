@@ -34,15 +34,6 @@ class SearchLinesAdapter(private val context: Context) :
 
             binding.apply {
                 txtCode.text = context.getString(R.string.txt_idLine, line.codeOfLine.toString())
-                txtIsCircular.text = context.getString(
-                    R.string.txt_isCircular,
-                    if (line.worksInCircleMode) "Sim" else "Não"
-                )
-                txtSign.text = context.getString(
-                    R.string.txt_sign,
-                    line.firstPartOfSignLine,
-                    line.secondPartOfSignLine.toString()
-                )
                 txtTpTs.text = context.getString(
                     R.string.txt_direction_principal,
                     line.signOfLineDirectionPrincipal
@@ -50,6 +41,22 @@ class SearchLinesAdapter(private val context: Context) :
                 txtTsTp.text = context.getString(
                     R.string.txt_direction_secondary,
                     line.signOfLineDirectionSecondary
+                )
+                txtIsCircular.text = context.getString(
+                    R.string.txt_isCircular,
+                    if (line.worksInCircleMode) "Sim" else "Não"
+                )
+
+                txtDirection.text = if(line.directionOfWorks == 1){
+                    context.getString(R.string.txt_direction_tpts)
+                } else {
+                    context.getString(R.string.txt_direction_tstp)
+                }
+
+                txtSign.text = context.getString(
+                    R.string.txt_sign,
+                    line.firstPartOfSignLine,
+                    line.secondPartOfSignLine.toString()
                 )
             }
         }
