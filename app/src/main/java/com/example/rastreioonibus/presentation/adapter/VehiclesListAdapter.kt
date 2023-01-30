@@ -34,8 +34,6 @@ class VehiclesListAdapter(
 
         private val binding = ItemVehicleBinding.bind(itemView)
 
-        private lateinit var accessible: ImageView
-
         fun bind(vehicle: PrevVehicle) =
             binding.apply {
                 txtPrefixVehicle.text =

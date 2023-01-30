@@ -21,4 +21,5 @@
     <color name="primaryTextColor">#000000</color>
     <color name="light_blue_700">#0288D1</color>
     <color name="light_blue_300">#4FC3F7</color>
+    <color name="easy_gray">#BDBDBD</color>
 </resources>
