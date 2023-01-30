@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RastreioOnibus</string>
+    <string name="app_name">SPBus</string>
 
     <string name="txt_loading_message">Carregando dados</string>
     <string name="txt_not_successful_response">Erro a buscar dados</string>

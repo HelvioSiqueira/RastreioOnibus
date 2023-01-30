@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "1065986375576",
-    "project_id": "rastreionibus",
-    "storage_bucket": "rastreionibus.appspot.com"
+    "project_number": "149696677064",
+    "project_id": "spbus-405e4",
+    "storage_bucket": "spbus-405e4.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1065986375576:android:12256b7354bf24333535ed",
+        "mobilesdk_app_id": "1:149696677064:android:9a08b620368a22a0cc51fd",
         "android_client_info": {
           "package_name": "com.example.rastreioonibus"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1065986375576-ihr9226pgkn6j0jj9li86blfd7gjtc5p.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.rastreioonibus",
-            "certificate_hash": "751c50910066427adb8e5b116cdf3a3731439ad3"
-          }
-        },
-        {
-          "client_id": "1065986375576-lk7uhd5mfmgrn8kgqdjckkdv4jfijse2.apps.googleusercontent.com",
+          "client_id": "149696677064-s8ft0amivqouh8b677sdcsunmvo7s19a.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAMYDQD__NQSfhl-LOKNqEC6fZY8aK6xOY"
+          "current_key": "AIzaSyAnTPfPPdGMGfe5_roVGFJxT4Hnsb-RC8Y"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1065986375576-lk7uhd5mfmgrn8kgqdjckkdv4jfijse2.apps.googleusercontent.com",
+              "client_id": "149696677064-s8ft0amivqouh8b677sdcsunmvo7s19a.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

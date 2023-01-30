@@ -146,7 +146,6 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     1 -> {
-
                         bindingSearchLines.inputTextSearch.text.toString().let {
                             if (it.isNotBlank()) {
                                 viewModel.getLines(it)

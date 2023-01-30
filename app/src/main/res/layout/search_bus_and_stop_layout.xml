@@ -85,6 +85,7 @@
         tools:hint="Linha">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:inputType="number"
             android:id="@+id/inputTextParadeLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
