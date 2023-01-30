@@ -66,13 +66,13 @@ class MapsViewModel(
                 isListPosVehiclesEmpty.value = true
             }
         }
+
     }
 
     fun getParades(term: String) {
         viewModelScope.launch {
             listParades.value = manager.getParades(::haveError, term)
         }
-
     }
 
     fun getParadesByLine(idLine: Int) {

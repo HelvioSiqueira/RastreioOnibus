@@ -2,7 +2,6 @@ package com.example.rastreioonibus.presentation.util
 
 import com.example.rastreioonibus.databinding.SearchBusAndStopLayoutBinding
 import com.example.rastreioonibus.presentation.map.MapsViewModel
-import com.google.android.gms.maps.GoogleMap
 
 fun MapsViewModel.search(
     binding: SearchBusAndStopLayoutBinding

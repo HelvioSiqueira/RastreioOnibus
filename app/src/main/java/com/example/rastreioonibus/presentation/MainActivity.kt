@@ -6,10 +6,6 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.URLSpan
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -18,14 +14,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rastreioonibus.R
 import com.example.rastreioonibus.databinding.ActivityMainBinding
 import com.example.rastreioonibus.databinding.SearchBusAndStopLayoutBinding
 import com.example.rastreioonibus.databinding.SearchLinesLayoutBinding
 import com.example.rastreioonibus.domain.model.Parades
 import com.example.rastreioonibus.domain.model.Vehicles
-import com.example.rastreioonibus.presentation.adapter.CustomPagerAdapter
 import com.example.rastreioonibus.presentation.adapter.SearchLinesAdapter
 import com.example.rastreioonibus.presentation.map.DetailsDialog
 import com.example.rastreioonibus.presentation.map.MapsViewModel
@@ -44,7 +38,6 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
-// Obter localização atual do usuario
 // Fazer com camera vá para local pesquisado
 class MainActivity : AppCompatActivity() {
 
@@ -54,14 +47,14 @@ class MainActivity : AppCompatActivity() {
     private var listPosVehicles: List<Vehicles>? = listOf()
     private var listParades = listOf<Parades>()
 
-    private lateinit var binding: ActivityMainBinding
     private var searchAdapter: SearchLinesAdapter = SearchLinesAdapter(this)
+    private lateinit var binding: ActivityMainBinding
     private lateinit var behaviorDetailsParades: BottomSheetBehavior<LinearLayout>
     private lateinit var behaviorFilter: BottomSheetBehavior<ConstraintLayout>
 
     private val locationRequestCode = 1
+    private var origin = LatLng(-23.561706, -46.655981)
     private lateinit var locationProviderClient: FusedLocationProviderClient
-    private lateinit var origin: LatLng
 
     private lateinit var connectivityManager: ConnectivityManager
 
@@ -144,7 +137,13 @@ class MainActivity : AppCompatActivity() {
             if (behaviorFilter.state == BottomSheetBehavior.STATE_EXPANDED) {
 
                 when (layoutId) {
-                    0 -> viewModel.search(bindingSearchStopAndVehicles)
+                    0 -> {
+                        viewModel.search(bindingSearchStopAndVehicles)
+
+                        viewModel.endLoading.observe(this) {
+                            if (it) animateCameraWhenEndSearch()
+                        }
+                    }
                     1 -> {
 
                         bindingSearchLines.inputTextSearch.text.toString().let {
@@ -202,6 +201,15 @@ class MainActivity : AppCompatActivity() {
         (supportFragmentManager.findFragmentById(R.id.fragmentMap) as SupportMapFragment).getMapAsync {
             googleMap = it
         }
+
+        viewModel.endLoading.observe(this) {
+            if (it) {
+                binding.occultMessageLoading()
+                fillMap()
+            } else {
+                binding.showMessageLoading(this)
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -222,9 +230,7 @@ class MainActivity : AppCompatActivity() {
                         ::callbackOnLost
                     )
                 } else {
-                    origin = LatLng(-23.561706, -46.655981)
                     animateCamera(origin)
-
                     connectivityManager.networkCallback(
                         ::callbackOnAvailable,
                         ::callbackOnLost
@@ -240,18 +246,9 @@ class MainActivity : AppCompatActivity() {
             uiSettings.isMyLocationButtonEnabled = true
             uiSettings.isScrollGesturesEnabled = true
         }
-
-        viewModel.endLoading.observe(this) {
-            if (it) {
-                binding.occultMessageLoading()
-                fillMap(map)
-            } else {
-                binding.showMessageLoading(this)
-            }
-        }
     }
 
-    private fun fillMap(googleMap: GoogleMap) {
+    private fun fillMap() {
         googleMap.apply {
             setOnCameraMoveListener {
                 if (behaviorDetailsParades.state == BottomSheetBehavior.STATE_EXPANDED) {
@@ -302,6 +299,19 @@ class MainActivity : AppCompatActivity() {
                     ::callbackOnAvailable,
                     ::callbackOnLost
                 )
+            }
+        }
+    }
+
+    private fun animateCameraWhenEndSearch() {
+        if (listParades.isNotEmpty()) {
+            listParades.first().let {
+                animateCamera(LatLng(it.latitude, it.longitude))
+            }
+
+        } else if (listPosVehicles?.isNotEmpty() == true) {
+            listPosVehicles?.first()?.let {
+                animateCamera(LatLng(it.latitude, it.longitude))
             }
         }
     }
