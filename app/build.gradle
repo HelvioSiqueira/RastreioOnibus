@@ -3,15 +3,16 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'kotlin-kapt'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.rastreioonibus"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -43,7 +44,12 @@ android {
 
 dependencies {
 
-    implementation 'com.google.android.gms:play-services-ads:21.4.0'
+    implementation platform("com.google.firebase:firebase-bom:$firebase_bom")
+
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    implementation "com.google.android.gms:play-services-ads:$playservices_ads_version"
 
     //MaterialSearchView
     implementation "com.github.mancj:MaterialSearchBar:$materialsearchview_version"

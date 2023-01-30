@@ -6,12 +6,14 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isEmpty
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.example.rastreioonibus.R
@@ -135,7 +137,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.fabSearch.setOnClickListener {
             if (behaviorFilter.state == BottomSheetBehavior.STATE_EXPANDED) {
-
                 when (layoutId) {
                     0 -> {
                         viewModel.search(bindingSearchStopAndVehicles)
@@ -177,6 +178,12 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.listLines.observe(this) {
             searchAdapter.submitList(it)
+
+            if(it.isNotEmpty()){
+                bindingSearchLines.txtEmpty.visibility = View.GONE
+            } else {
+                bindingSearchLines.txtEmpty.visibility = View.VISIBLE
+            }
         }
 
         viewModel.error.observe(this) {

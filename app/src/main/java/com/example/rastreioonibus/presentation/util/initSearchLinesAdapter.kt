@@ -1,6 +1,7 @@
 package com.example.rastreioonibus.presentation.util
 
 import android.content.Context
+import androidx.core.view.isEmpty
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rastreioonibus.databinding.SearchLinesLayoutBinding
 import com.example.rastreioonibus.presentation.adapter.SearchLinesAdapter

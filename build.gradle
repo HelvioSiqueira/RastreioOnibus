@@ -9,6 +9,8 @@ buildscript {
         playservices_version = "21.0.1"
         parceler_version = "1.1.13"
         materialsearchview_version = "0.8.5"
+        playservices_ads_version = "21.4.0"
+        firebase_bom = "31.2.0"
     }
 
     repositories {
@@ -18,7 +20,7 @@ buildscript {
     }
 
     dependencies {
-
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.2'
     }
 }
 

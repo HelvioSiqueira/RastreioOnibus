@@ -33,4 +33,5 @@
     <string name="txt_direction_secondary">%s</string>
     
     <string name="txt_without_text">Nenhum texto digitado</string>
+    <string name="txt_search_empty">Nada encontrado</string>
 </resources>
