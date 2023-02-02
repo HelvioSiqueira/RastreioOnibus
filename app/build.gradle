@@ -3,7 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'kotlin-kapt'
-    id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
 
@@ -11,7 +10,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.rastreioonibus"
+        applicationId "com.helvio.rastreioonibus"
         minSdk 21
         targetSdk 33
         versionCode 1
