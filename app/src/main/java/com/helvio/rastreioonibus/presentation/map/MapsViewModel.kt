@@ -3,21 +3,12 @@ package com.helvio.rastreioonibus.presentation.map
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
-import com.google.android.gms.location.*
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.tasks.Task
 import com.helvio.rastreioonibus.domain.model.*
 import com.helvio.rastreioonibus.domain.usecase.RastreioOnibusManagerUseCase
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class MapsViewModel(
     private val manager: RastreioOnibusManagerUseCase,
@@ -82,7 +73,13 @@ class MapsViewModel(
 
     fun getParades(term: String) {
         viewModelScope.launch {
-            listParades.value = manager.getParades(::haveError, term)
+            val resultList = manager.getParades(::haveError, term)
+
+            if(resultList.isNotEmpty()){
+                listParades.value = resultList
+            } else {
+                isListParadesEmpty.value = true
+            }
         }
     }
 
@@ -115,5 +112,9 @@ class MapsViewModel(
 
     private fun haveError(error: String) {
         this.error.value = error
+    }
+
+    private fun noResult(){
+
     }
 }

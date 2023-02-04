@@ -9,7 +9,6 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.provider.Settings
 import android.view.View
 import android.widget.LinearLayout
@@ -20,6 +19,17 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.tabs.TabLayout
 import com.helvio.rastreioonibus.R
 import com.helvio.rastreioonibus.databinding.ActivityMainBinding
 import com.helvio.rastreioonibus.databinding.SearchBusAndStopLayoutBinding
@@ -30,18 +40,6 @@ import com.helvio.rastreioonibus.presentation.adapter.SearchLinesAdapter
 import com.helvio.rastreioonibus.presentation.map.DetailsDialog
 import com.helvio.rastreioonibus.presentation.map.MapsViewModel
 import com.helvio.rastreioonibus.presentation.util.*
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
@@ -171,19 +169,21 @@ class MainActivity : AppCompatActivity() {
         viewModel.isListPosVehiclesEmpty.observe(this) {
             if (it) {
                 Toast.makeText(this, "Veiculos não encotrados", Toast.LENGTH_SHORT).show()
+                binding.occultMessageLoading()
             }
         }
 
         viewModel.isListParadesEmpty.observe(this) {
             if (it) {
                 Toast.makeText(this, "Paradas não encotrados", Toast.LENGTH_SHORT).show()
+                binding.occultMessageLoading()
             }
         }
 
         viewModel.listLines.observe(this) {
             searchAdapter.submitList(it)
 
-            if(it.isNotEmpty()){
+            if (it.isNotEmpty()) {
                 bindingSearchLines.txtEmpty.visibility = View.GONE
             } else {
                 bindingSearchLines.txtEmpty.visibility = View.VISIBLE
@@ -302,7 +302,7 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationRequestCode
             )
         } else {
-            if(isGpsEnabled(this)){
+            if (isGpsEnabled(this)) {
                 locationProviderClient.lastLocation.addOnSuccessListener {
                     origin = LatLng(it.latitude, it.longitude)
                     animateCamera(origin)
@@ -358,9 +358,5 @@ class MainActivity : AppCompatActivity() {
     private fun isGpsEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-    }
-
-    companion object{
-        private const val EXTRA_GPS_DIALOG = "gpsDialogOpen"
     }
 }
