@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:149696677064:android:9a08b620368a22a0cc51fd",
+        "mobilesdk_app_id": "1:149696677064:android:7f4145ed26aaefc5cc51fd",
         "android_client_info": {
-          "package_name": "com.example.rastreioonibus"
+          "package_name": "com.helvio.rastreioonibus"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "149696677064-a874p9j6at3g7flp9ve2gic067vmf94r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.helvio.rastreioonibus",
+            "certificate_hash": "751c50910066427adb8e5b116cdf3a3731439ad3"
+          }
+        },
         {
           "client_id": "149696677064-s8ft0amivqouh8b677sdcsunmvo7s19a.apps.googleusercontent.com",
           "client_type": 3

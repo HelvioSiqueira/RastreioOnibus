@@ -1,11 +1,16 @@
 package com.helvio.rastreioonibus.presentation
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.os.PersistableBundle
+import android.provider.Settings
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -28,6 +33,7 @@ import com.helvio.rastreioonibus.presentation.util.*
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -39,7 +45,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
-// Fazer com camera vá para local pesquisado
+//Trocar id do admob
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MapsViewModel by inject()
@@ -296,14 +302,19 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationRequestCode
             )
         } else {
-            locationProviderClient.lastLocation.addOnSuccessListener {
-                origin = LatLng(it.latitude, it.longitude)
-                animateCamera(origin)
+            if(isGpsEnabled(this)){
+                locationProviderClient.lastLocation.addOnSuccessListener {
+                    origin = LatLng(it.latitude, it.longitude)
+                    animateCamera(origin)
 
-                connectivityManager.networkCallback(
-                    ::callbackOnAvailable,
-                    ::callbackOnLost
-                )
+                    connectivityManager.networkCallback(
+                        ::callbackOnAvailable,
+                        ::callbackOnLost
+                    )
+                }
+            } else {
+                Toast.makeText(this, getString(R.string.txt_require_gps), Toast.LENGTH_LONG).show()
+                requestGps(this)
             }
         }
     }
@@ -337,5 +348,19 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             binding.showMessageProblem(resources.getString(R.string.txt_no_conection))
         }
+    }
+
+    private fun requestGps(activity: Activity) {
+        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        activity.startActivity(intent)
+    }
+
+    private fun isGpsEnabled(context: Context): Boolean {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    companion object{
+        private const val EXTRA_GPS_DIALOG = "gpsDialogOpen"
     }
 }

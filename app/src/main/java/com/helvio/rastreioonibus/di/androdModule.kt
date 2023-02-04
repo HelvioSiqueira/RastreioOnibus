@@ -7,6 +7,7 @@ import com.helvio.rastreioonibus.domain.usecase.*
 import com.helvio.rastreioonibus.presentation.map.MapsViewModel
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,7 +20,7 @@ val androidModule = module {
     }
 
     single {
-        MapsViewModel(manager = get())
+        MapsViewModel(manager = get(), app = androidApplication())
     }
 
     single {
