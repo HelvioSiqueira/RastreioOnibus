@@ -3,13 +3,12 @@ package com.helvio.rastreioonibus.presentation
 import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -21,13 +20,14 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
 import com.helvio.rastreioonibus.R
@@ -42,6 +42,7 @@ import com.helvio.rastreioonibus.presentation.map.MapsViewModel
 import com.helvio.rastreioonibus.presentation.util.*
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
+import kotlin.coroutines.suspendCoroutine
 
 //Trocar id do admob
 class MainActivity : AppCompatActivity() {
@@ -63,12 +64,22 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var connectivityManager: ConnectivityManager
 
+    private var isGpsDialogOpened = false
+
+    private val mapFragment: SupportMapFragment by lazy {
+        supportFragmentManager.findFragmentById(R.id.fragmentMap) as SupportMapFragment
+    }
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        mapFragment.getMapAsync {
+            googleMap = it
+        }
 
         val bindingSearchStopAndVehicles = SearchBusAndStopLayoutBinding.inflate(layoutInflater)
         val bindingSearchLines = SearchLinesLayoutBinding.inflate(layoutInflater)
@@ -80,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         binding.adView.loadAd(AdRequest.Builder().build())
 
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        requestLocationPermission()
+        checkGpsStatus(this)
 
         connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -209,10 +220,6 @@ class MainActivity : AppCompatActivity() {
             listPosVehicles = it
         }
 
-        (supportFragmentManager.findFragmentById(R.id.fragmentMap) as SupportMapFragment).getMapAsync {
-            googleMap = it
-        }
-
         viewModel.endLoading.observe(this) {
             if (it) {
                 binding.occultMessageLoading()
@@ -268,6 +275,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             clear()
+
             addMarkersToMap(this@MainActivity, listPosVehicles, listParades)
 
             setOnMarkerClickListener {
@@ -302,19 +310,14 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationRequestCode
             )
         } else {
-            if (isGpsEnabled(this)) {
-                locationProviderClient.lastLocation.addOnSuccessListener {
-                    origin = LatLng(it.latitude, it.longitude)
-                    animateCamera(origin)
+            locationProviderClient.lastLocation.addOnSuccessListener {
+                origin = LatLng(it.latitude, it.longitude)
+                animateCamera(origin)
 
-                    connectivityManager.networkCallback(
-                        ::callbackOnAvailable,
-                        ::callbackOnLost
-                    )
-                }
-            } else {
-                Toast.makeText(this, getString(R.string.txt_require_gps), Toast.LENGTH_LONG).show()
-                requestGps(this)
+                connectivityManager.networkCallback(
+                    ::callbackOnAvailable,
+                    ::callbackOnLost
+                )
             }
         }
     }
@@ -350,13 +353,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun requestGps(activity: Activity) {
-        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-        activity.startActivity(intent)
+    private fun checkGpsStatus(activity: Activity) {
+        val locationRequest = LocationRequest
+            .Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
+            .build()
+
+        val builder = LocationSettingsRequest.Builder().apply {
+            addLocationRequest(locationRequest)
+            setAlwaysShow(true)
+        }
+
+        val client: SettingsClient = LocationServices.getSettingsClient(activity)
+        val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    exception.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS)
+                } catch (sendIntentException: IntentSender.SendIntentException) {
+
+                }
+            }
+        }
     }
 
     private fun isGpsEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    companion object {
+        private const val REQUEST_CHECK_SETTINGS = 1
     }
 }

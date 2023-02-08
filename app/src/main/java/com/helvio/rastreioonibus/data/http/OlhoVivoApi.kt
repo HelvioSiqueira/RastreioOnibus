@@ -7,7 +7,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-interface OlhoVivoApi {
+interface  OlhoVivoApi {
 
     @GET("Posicao")
     suspend fun getPosVehicles(
