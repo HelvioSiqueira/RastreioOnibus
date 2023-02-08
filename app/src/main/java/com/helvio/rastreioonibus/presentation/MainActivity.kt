@@ -1,14 +1,15 @@
 package com.helvio.rastreioonibus.presentation
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -42,7 +43,6 @@ import com.helvio.rastreioonibus.presentation.map.MapsViewModel
 import com.helvio.rastreioonibus.presentation.util.*
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
-import kotlin.coroutines.suspendCoroutine
 
 //Trocar id do admob
 class MainActivity : AppCompatActivity() {
@@ -63,8 +63,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var locationProviderClient: FusedLocationProviderClient
 
     private lateinit var connectivityManager: ConnectivityManager
-
-    private var isGpsDialogOpened = false
 
     private val mapFragment: SupportMapFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.fragmentMap) as SupportMapFragment
@@ -91,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         binding.adView.loadAd(AdRequest.Builder().build())
 
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        checkGpsStatus(this)
+        checkGpsStatus()
 
         connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -310,8 +308,15 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationRequestCode
             )
         } else {
+
             locationProviderClient.lastLocation.addOnSuccessListener {
-                origin = LatLng(it.latitude, it.longitude)
+
+                origin = if(it == null){
+                    LatLng(-23.561706, -46.655981)
+                } else {
+                    LatLng(it.latitude, it.longitude)
+                }
+                
                 animateCamera(origin)
 
                 connectivityManager.networkCallback(
@@ -353,36 +358,52 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkGpsStatus(activity: Activity) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CHECK_SETTINGS && isGpsEnabled()) {
+            Log.d("HSV", isGpsEnabled().toString())
+            requestLocationPermission()
+        }
+    }
+
+    private fun checkGpsStatus() {
+
+        Log.d("HSV", isGpsEnabled().toString())
+
         val locationRequest = LocationRequest
-            .Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
+            .Builder(Priority.PRIORITY_HIGH_ACCURACY, 100)
             .build()
 
         val builder = LocationSettingsRequest.Builder().apply {
             addLocationRequest(locationRequest)
-            setAlwaysShow(true)
         }
 
-        val client: SettingsClient = LocationServices.getSettingsClient(activity)
+        val client: SettingsClient = LocationServices.getSettingsClient(this)
         val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
 
-        task.addOnFailureListener { exception ->
-            if (exception is ResolvableApiException) {
-                try {
-                    exception.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS)
-                } catch (sendIntentException: IntentSender.SendIntentException) {
+        task.addOnSuccessListener {
+            requestLocationPermission()
+        }
 
+        task.addOnFailureListener { exception ->
+
+            try {
+                if (exception is ResolvableApiException) {
+                    exception.startResolutionForResult(this, REQUEST_CHECK_SETTINGS)
                 }
+            } catch (sendIntentException: IntentSender.SendIntentException) {
+
             }
         }
     }
 
-    private fun isGpsEnabled(context: Context): Boolean {
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private fun isGpsEnabled(): Boolean {
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     companion object {
-        private const val REQUEST_CHECK_SETTINGS = 1
+        private const val REQUEST_CHECK_SETTINGS = 3
     }
 }

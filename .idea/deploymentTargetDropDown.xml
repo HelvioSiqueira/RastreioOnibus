@@ -6,23 +6,12 @@
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\helvi\.android\avd\Pixel_5_API_28.avd" />
+            <type value="SERIAL_NUMBER" />
+            <value value="QT19545HA11A2501849" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetSelectedWithDropDown>
-    <targetSelectedWithDropDown>
-      <Target>
-        <type value="QUICK_BOOT_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\helvi\.android\avd\Pixel_5_API_28.avd" />
-          </Key>
-        </deviceKey>
-      </Target>
-    </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2023-02-08T13:39:20.457318200Z" />
+    <timeTargetWasSelectedWithDropDown value="2023-02-08T16:54:08.128998900Z" />
   </component>
 </project>
