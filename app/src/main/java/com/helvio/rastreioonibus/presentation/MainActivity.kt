@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Build
@@ -28,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
@@ -48,6 +50,7 @@ import org.koin.android.ext.android.inject
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MapsViewModel by inject()
+    private val connectivityState: ConnectivityState by inject()
     private lateinit var googleMap: GoogleMap
 
     private var listPosVehicles: List<Vehicles>? = listOf()
@@ -62,13 +65,10 @@ class MainActivity : AppCompatActivity() {
     private var origin = LatLng(-23.561706, -46.655981)
     private lateinit var locationProviderClient: FusedLocationProviderClient
 
-    private lateinit var connectivityManager: ConnectivityManager
-
     private val mapFragment: SupportMapFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.fragmentMap) as SupportMapFragment
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -91,10 +91,7 @@ class MainActivity : AppCompatActivity() {
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         checkGpsStatus()
 
-        connectivityManager =
-            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-        if (!connectivityManager.haveInternetOnInitApp()) {
+        if (!connectivityState.haveInternetOnInitApp()) {
             binding.showMessageProblem(resources.getString(R.string.txt_no_conection))
         }
 
@@ -222,6 +219,9 @@ class MainActivity : AppCompatActivity() {
             if (it) {
                 binding.occultMessageLoading()
                 fillMap()
+                googleMap.addMarker(MarkerOptions()
+                    .position(origin)
+                    .title("Localização Atual"))
             } else {
                 binding.showMessageLoading(this)
             }
@@ -241,13 +241,13 @@ class MainActivity : AppCompatActivity() {
 
                     requestLocationPermission()
 
-                    connectivityManager.networkCallback(
+                    connectivityState.networkCallback(
                         ::callbackOnAvailable,
                         ::callbackOnLost
                     )
                 } else {
                     animateCamera(origin)
-                    connectivityManager.networkCallback(
+                    connectivityState.networkCallback(
                         ::callbackOnAvailable,
                         ::callbackOnLost
                     )
@@ -273,7 +273,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             clear()
-
             addMarkersToMap(this@MainActivity, listPosVehicles, listParades)
 
             setOnMarkerClickListener {
@@ -311,15 +310,15 @@ class MainActivity : AppCompatActivity() {
 
             locationProviderClient.lastLocation.addOnSuccessListener {
 
-                origin = if(it == null){
-                    LatLng(-23.561706, -46.655981)
-                } else {
-                    LatLng(it.latitude, it.longitude)
-                }
-                
+                 origin = if (it == null) {
+                     LatLng(-23.561706, -46.655981)
+                 } else {
+                     LatLng(it.latitude, it.longitude)
+                 }
+
                 animateCamera(origin)
 
-                connectivityManager.networkCallback(
+                connectivityState.networkCallback(
                     ::callbackOnAvailable,
                     ::callbackOnLost
                 )

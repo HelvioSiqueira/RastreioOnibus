@@ -1,11 +1,14 @@
 package com.helvio.rastreioonibus.di
 
+import android.content.Context
+import android.net.ConnectivityManager
 import com.helvio.rastreioonibus.data.http.OlhoVivoApi
 import com.helvio.rastreioonibus.data.repository.HttpRepository
 import com.helvio.rastreioonibus.data.util.API
 import com.helvio.rastreioonibus.domain.usecase.*
 import com.helvio.rastreioonibus.presentation.map.MapsViewModel
 import com.google.gson.GsonBuilder
+import com.helvio.rastreioonibus.presentation.util.ConnectivityState
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
@@ -77,5 +80,11 @@ val androidModule = module {
             .build()
 
         retrofit.create(OlhoVivoApi::class.java)
+    }
+
+    single {
+        ConnectivityState(
+            connectivityManager = androidApplication().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        )
     }
 }
