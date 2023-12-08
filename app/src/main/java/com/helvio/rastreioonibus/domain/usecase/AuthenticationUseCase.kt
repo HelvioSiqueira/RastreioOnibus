@@ -12,7 +12,7 @@ class AuthenticationUseCase(
         var isAuthenticate = false
 
         try {
-            val certificate = repo.authenticator(context).headers()["Set-Cookie"]
+            val certificate = repo.authenticator(context).headers().toMultimap()["Set-Cookie"]?.first()
 
             if (certificate != null) {
                 repo.setCertificate(certificate)

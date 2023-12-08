@@ -23,7 +23,6 @@
         android:roundIcon="@drawable/icon_bus"
         android:supportsRtl="true"
         android:theme="@style/Theme.RastreioOnibus"
-        android:usesCleartextTraffic="true"
         tools:targetApi="31" >
         <activity
             android:name="com.helvio.rastreioonibus.presentation.MainActivity"

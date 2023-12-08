@@ -5,16 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.location.Location
 import android.location.LocationManager
-import android.net.ConnectivityManager
-import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
@@ -27,6 +25,7 @@ import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
@@ -64,6 +63,8 @@ class MainActivity : AppCompatActivity() {
     private val locationRequestCode = 1
     private var origin = LatLng(-23.561706, -46.655981)
     private lateinit var locationProviderClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
 
     private val mapFragment: SupportMapFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.fragmentMap) as SupportMapFragment
@@ -219,9 +220,6 @@ class MainActivity : AppCompatActivity() {
             if (it) {
                 binding.occultMessageLoading()
                 fillMap()
-                googleMap.addMarker(MarkerOptions()
-                    .position(origin)
-                    .title("Localização Atual"))
             } else {
                 binding.showMessageLoading(this)
             }
@@ -308,21 +306,29 @@ class MainActivity : AppCompatActivity() {
             )
         } else {
 
-            locationProviderClient.lastLocation.addOnSuccessListener {
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
 
-                 origin = if (it == null) {
-                     LatLng(-23.561706, -46.655981)
-                 } else {
-                     LatLng(it.latitude, it.longitude)
-                 }
+                    for (location in locationResult.locations) {
 
-                animateCamera(origin)
-
-                connectivityState.networkCallback(
-                    ::callbackOnAvailable,
-                    ::callbackOnLost
-                )
+                        origin = LatLng(location.latitude, location.longitude)
+                        googleMap.addMarker(
+                            MarkerOptions().position(origin)
+                        )
+                    }
+                }
             }
+
+            locationProviderClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
+
+            connectivityState.networkCallback(
+                ::callbackOnAvailable,
+                ::callbackOnLost
+            )
         }
     }
 
@@ -348,6 +354,10 @@ class MainActivity : AppCompatActivity() {
             viewModel.authenticate(this@MainActivity)
             initMap(googleMap)
             binding.occultMessageProblem()
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                animateCamera(origin)
+            }, 500)
         }
     }
 
@@ -370,7 +380,7 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("HSV", isGpsEnabled().toString())
 
-        val locationRequest = LocationRequest
+        locationRequest = LocationRequest
             .Builder(Priority.PRIORITY_HIGH_ACCURACY, 100)
             .build()
 
@@ -392,7 +402,7 @@ class MainActivity : AppCompatActivity() {
                     exception.startResolutionForResult(this, REQUEST_CHECK_SETTINGS)
                 }
             } catch (sendIntentException: IntentSender.SendIntentException) {
-
+                sendIntentException.printStackTrace()
             }
         }
     }

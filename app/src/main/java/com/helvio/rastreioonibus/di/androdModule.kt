@@ -2,14 +2,17 @@ package com.helvio.rastreioonibus.di
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.os.Build
 import com.helvio.rastreioonibus.data.http.OlhoVivoApi
 import com.helvio.rastreioonibus.data.repository.HttpRepository
 import com.helvio.rastreioonibus.data.util.API
 import com.helvio.rastreioonibus.domain.usecase.*
 import com.helvio.rastreioonibus.presentation.map.MapsViewModel
 import com.google.gson.GsonBuilder
+import com.helvio.rastreioonibus.BuildConfig
 import com.helvio.rastreioonibus.presentation.util.ConnectivityState
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -67,7 +70,12 @@ val androidModule = module {
     }
 
     single {
-        val httpClient = OkHttpClient.Builder()
+        val logLevel =
+            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+
+        val interceptor = HttpLoggingInterceptor().setLevel(logLevel)
+
+        val httpClient = OkHttpClient.Builder().addInterceptor(interceptor)
 
         val gson = GsonBuilder()
             .setLenient()

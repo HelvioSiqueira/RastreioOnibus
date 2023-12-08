@@ -113,8 +113,4 @@ class MapsViewModel(
     private fun haveError(error: String) {
         this.error.value = error
     }
-
-    private fun noResult(){
-
-    }
 }
