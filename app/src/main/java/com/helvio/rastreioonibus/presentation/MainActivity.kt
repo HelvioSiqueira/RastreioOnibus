@@ -21,11 +21,18 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsResponse
+import com.google.android.gms.location.Priority
+import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
@@ -45,7 +52,6 @@ import com.helvio.rastreioonibus.presentation.util.*
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
-//Trocar id do admob
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MapsViewModel by inject()
@@ -155,6 +161,7 @@ class MainActivity : AppCompatActivity() {
                             if (it) animateCameraWhenEndSearch()
                         }
                     }
+
                     1 -> {
                         bindingSearchLines.inputTextSearch.text.toString().let {
                             if (it.isNotBlank()) {
